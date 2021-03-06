@@ -3,9 +3,10 @@
 #include <iostream>
 #include <cassert>
 
+// clockwise order (?)
 float vertices[] = {
         .0f, .5f, 0,
-        .5f, .5f, 0,
+        .5f, -.5f, 0,
         -.5f, -.5f, 0
 };
 
@@ -15,7 +16,7 @@ unsigned int setupEnableVertexAttribs() {
     glGenVertexArrays(1, &vao_id);
     glBindVertexArray(vao_id);
 
-    // TODO: WHY: written 0 in tutorial blogs? shoouldn't it be vao_id
+    // TODO: passing vao_id breaks the code; not sure why
     glEnableVertexAttribArray(0);
 
     return vao_id;
@@ -32,6 +33,8 @@ unsigned int setupVertexObjects() {
     // copy buffer data from memory into array buffer for static drawing into the
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
+    // This zero corresponds to the zero we mentioned in layout (location=0)
+    // still I'm not super clear on this
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
     return vbo_id;
