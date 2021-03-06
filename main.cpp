@@ -5,9 +5,15 @@
 
 // clockwise order (?)
 float vertices[] = {
-        .0f, .5f, 0,
+        .5f, .5f, 0,
         .5f, -.5f, 0,
-        -.5f, -.5f, 0
+        -.5f, -.5f, 0,
+        -.5f, .5f, 0
+};
+
+unsigned int indices[] = {
+        0, 1, 3,
+        1, 2, 3
 };
 
 unsigned int setupEnableVertexAttribs() {
@@ -38,6 +44,16 @@ unsigned int setupVertexObjects() {
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
     return vbo_id;
+}
+
+unsigned int setupElmBuffObjects() {
+    unsigned int ebo_id;
+    glGenBuffers(1, &ebo_id);
+
+    // usually we always have to bind the created buffer to some GL buffer
+    // and then insert data into that buffer
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo_id);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 }
 
 unsigned int setupShaders() {
@@ -113,12 +129,16 @@ void updateFrame(GLFWwindow *window) {
 void drawTriangles(unsigned int shader_prog_id, unsigned int vao_id) {
     glUseProgram(shader_prog_id);
     glBindVertexArray(vao_id);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
 void renderLoop(GLFWwindow *window) {
+    // toggle for wireframe
+//    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
     auto vao_id = setupEnableVertexAttribs();
     auto vbo_id = setupVertexObjects();
+    auto ebo_id = setupElmBuffObjects();
     auto shader_prog_id = setupShaders();
 
     while (not glfwWindowShouldClose(window)) {
@@ -137,6 +157,7 @@ void renderLoop(GLFWwindow *window) {
 
     glDeleteVertexArrays(1, &vao_id);
     glDeleteBuffers(1, &vbo_id);
+    glDeleteBuffers(1, &ebo_id);
     glDeleteProgram(shader_prog_id);
 }
 
