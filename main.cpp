@@ -15,6 +15,10 @@
 const unsigned int SCREEN_WIDTH = 1280;
 const unsigned int SCREEN_HEIGHT = 720;
 
+bool ROTATING_X = false;
+bool ROTATING_Y = false;
+bool ROTATING_Z = false;
+
 void frameSizeCallback(GLFWwindow *_window, int width, int height) {
     glViewport(0, 0, width, height);
 }
@@ -40,19 +44,41 @@ void processInput(GLFWwindow *window, Shader &shader) {
 
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
+        return;
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS) {
+        ROTATING_Z = not ROTATING_Z;
+        return;
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS) {
+        ROTATING_X = not ROTATING_X;
+        return;
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS) {
+        ROTATING_Y = not ROTATING_Y;
+        return;
+    }
+
+    // reset all rotations :P
+    if (glfwGetKey(window, GLFW_KEY_V) == GLFW_PRESS) {
+        ROTATING_X = ROTATING_Y = ROTATING_Z = false;
+        return;
     }
 
     for (auto &[key, axis, dir] : objectMappings) {
         if (glfwGetKey(window, key) == GLFW_PRESS) {
             shader.moveObject(axis, dir);
-            break;
+            return;
         }
     }
 
     for (auto &[key, axis, dir] : cameraMappings) {
         if (glfwGetKey(window, key) == GLFW_PRESS) {
             shader.moveCamera(axis, dir);
-            break;
+            return;
         }
     }
 }
@@ -75,6 +101,12 @@ void calcProjections(Camera &camera, Shader &shader) {
 
 void drawObjects(Camera &camera, Shader &shader, Polyhedron &obj) {
     shader.use();
+    if (ROTATING_X)
+        shader.rotObject(0);
+    if (ROTATING_Y)
+        shader.rotObject(1);
+    if (ROTATING_Z)
+        shader.rotObject(2);
     calcProjections(camera, shader);
     obj.draw();
 }
@@ -87,7 +119,7 @@ void renderLoop(GLFWwindow *window) {
     shader.use();
     shader.initMatrixes();
 
-    auto object = Cube(0.5f);
+    auto object = HexagonalBipyramid(0.5f);
 
     Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 

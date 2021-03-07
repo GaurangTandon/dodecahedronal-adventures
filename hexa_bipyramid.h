@@ -8,11 +8,13 @@ class HexagonalBipyramid : public Polyhedron {
     void initVertices() {
         int ind = 0;
 
+        const double PI = std::acos(-1);
+
         // hexagon vertices in clockwise order
         for (int angle = 0; angle < 360; angle += 60) {
-            vertices[ind][0] = cos(angle) * scale;
+            vertices[ind][0] = cos(PI * angle / 180) * scale;
             vertices[ind][1] = 0;
-            vertices[ind][2] = sin(angle) * scale;
+            vertices[ind][2] = sin(PI * angle / 180) * scale;
             assignColor(ind);
             ind++;
         }
@@ -41,11 +43,9 @@ class HexagonalBipyramid : public Polyhedron {
 public:
     HexagonalBipyramid(float scale_arg = 1.0f) : Polyhedron(scale_arg, 3) {
         initVertices();
-        initVertices();
+        initFaces();
         finishedInit();
     }
-
-
 };
 
 #endif //A0_HEXA_BIPYRAMID_H

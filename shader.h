@@ -114,6 +114,16 @@ public:
         view = glm::translate(view, trans);
         setMatrix("view", view);
     }
+
+    void rotObject(int axis_ind) {
+        auto axis = glm::vec3(0.0f, 0.0f, 0.0f);
+        axis[axis_ind] = 1;
+
+        auto deltaDegrees = 100 * (currentFrameTime - previousFrameTime);
+        model = glm::rotate(model, glm::radians(deltaDegrees), axis);
+
+        setMatrix("model", model);
+    }
 };
 
 
