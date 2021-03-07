@@ -1,7 +1,6 @@
 #ifndef A0_Polyhedron_H
 #define A0_Polyhedron_H
 
-#include <vector>
 #include <GLFW/glfw3.h>
 
 //#define TEST
@@ -58,14 +57,18 @@ float COLORS[20][3] = {
 };
 
 class Polyhedron {
-protected:
-    float scale;
+private:
     int vertCountPerFace;
     int faceCount;
+    int triangleCount;
+
+protected:
+    float scale;
 
 #ifndef TEST
     float vertices[20][6];
     unsigned int indices[60];
+    unsigned int final_indices[100];
 #endif
     unsigned int vao_id;
     unsigned int vbo_id;
@@ -83,7 +86,7 @@ protected:
             -0.5f,  0.5f, 0.0f, 0, 1, 1,
             0.0f,  1.0f, 0.0f, 1, 0, 1
     };
-    unsigned int indices[5] = {
+    unsigned int final_indices[5] = {
             0, 1, 2, 3, 4
     };
 #endif
@@ -121,10 +124,33 @@ protected:
         // usually we always have to bind the created buffer to some GL buffer
         // and then insert data into that buffer
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo_id);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(final_indices), final_indices, GL_STATIC_DRAW);
+    }
+
+    void convertIndicesForTriangles() {
+        int ind = 0;
+
+        for (int i = 0; i < faceCount; i++) {
+            int offset = i * vertCountPerFace;
+
+            if (vertCountPerFace == 4) {
+                final_indices[ind++] = indices[offset];
+                final_indices[ind++] = indices[offset + 1];
+                final_indices[ind++] = indices[offset + 2];
+
+                final_indices[ind++] = indices[offset + 2];
+                final_indices[ind++] = indices[offset + 3];
+                final_indices[ind++] = indices[offset];
+            } else {
+                assert(false);
+            }
+        }
+
+        triangleCount = ind / 3;
     }
 
     void finishedInit() {
+        convertIndicesForTriangles();
         setupVertexObjects();
         setupElmBuffObjects();
     }
@@ -137,8 +163,8 @@ protected:
 
 public:
     Polyhedron(float scale_arg = 1.0f, int vertCount = 5, int faces = 12) : scale(scale_arg),
-                                                                              vertCountPerFace(vertCount),
-                                                                              faceCount(faces) {
+                                                                            vertCountPerFace(vertCount),
+                                                                            faceCount(faces) {
         setupVertexAttribs();
     }
 
@@ -154,10 +180,12 @@ public:
 #ifdef TEST
         glDrawElements(GL_TRIANGLE_FAN, 5, GL_UNSIGNED_INT, (void *) 0);
 #else
-        for (int i = 0; i < faceCount; i++) {
-            auto offset = vertCountPerFace * i * sizeof(unsigned int);
-            glDrawElements(GL_TRIANGLE_FAN, vertCountPerFace, GL_UNSIGNED_INT, (void *) offset);
-            glDrawElements(GL_LINE_LOOP, vertCountPerFace, GL_UNSIGNED_INT, (void *) offset);
+        const int TRIANGLE_SIDES = 3;
+
+        for (int i = 0; i < triangleCount; i++) {
+            auto offset = TRIANGLE_SIDES * i * sizeof(unsigned int);
+
+            glDrawElements(GL_TRIANGLES, TRIANGLE_SIDES, GL_UNSIGNED_INT, (void *) offset);
         }
 #endif
     }

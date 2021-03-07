@@ -10,9 +10,9 @@ class HexagonalBipyramid : public Polyhedron {
 
         // hexagon vertices in clockwise order
         for (int angle = 0; angle < 360; angle += 60) {
-            vertices[ind][0] = cos(angle);
+            vertices[ind][0] = cos(angle) * scale;
             vertices[ind][1] = 0;
-            vertices[ind][2] = sin(angle);
+            vertices[ind][2] = sin(angle) * scale;
             assignColor(ind);
             ind++;
         }
@@ -20,7 +20,7 @@ class HexagonalBipyramid : public Polyhedron {
         // top and bottom, respectively
         for (int side = 0; side < 2; side++) {
             vertices[ind][0] = vertices[ind][2] = 0;
-            vertices[ind][1] = (1 - 2 * side);
+            vertices[ind][1] = (1 - 2 * side) * scale;
             assignColor(ind);
             ind++;
         }
