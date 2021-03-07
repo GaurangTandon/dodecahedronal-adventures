@@ -9,6 +9,7 @@
 
 #include "regular_dodec.h"
 #include "hexa_bipyramid.h"
+#include "unidecagon.h"
 #include "cube.h"
 #include "camera.h"
 
@@ -119,7 +120,7 @@ void renderLoop(GLFWwindow *window) {
     shader.use();
     shader.initMatrixes();
 
-    auto object = HexagonalBipyramid(0.5f);
+    auto object = Unidecagon(0.5f);
 
     Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 

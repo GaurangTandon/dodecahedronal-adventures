@@ -29,19 +29,15 @@ class HexagonalBipyramid : public Polyhedron {
     }
 
     void initFaces() {
-        int ind = 0;
-
-        for (int side = 0; side < 2; side++) {
-            for (int v = 0; v < 6; v++) {
-                indices[ind++] = v;
-                indices[ind++] = (v + 1) % 6;
-                indices[ind++] = 6 + side;
+        for (unsigned int side = 0; side < 2; side++) {
+            for (unsigned int v = 0; v < 6; v++) {
+                faces.push_back({v, (v + 1) % 6, 6 + side});
             }
         }
     }
 
 public:
-    HexagonalBipyramid(float scale_arg = 1.0f) : Polyhedron(scale_arg, 3) {
+    HexagonalBipyramid(float scale_arg = 1.0f) : Polyhedron(scale_arg) {
         initVertices();
         initFaces();
         finishedInit();

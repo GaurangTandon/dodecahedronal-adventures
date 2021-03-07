@@ -2,6 +2,8 @@
 #define A0_REGULAR_DODEC_H
 
 #include <cmath>
+#include <numeric>
+#include <iomanip>
 #include "polyhedron.h"
 
 
@@ -55,7 +57,7 @@ class RegularDodecahedron : public Polyhedron {
         for (int j = 0; j <= 1; j++) { \
             vertices[nxt][a] = (1 - 2 * i) * x * scale; \
             vertices[nxt][b] = (1 - 2 * j) * y * scale; \
-            vertices[nxt][other_axis(a, b)] = 0; \
+            vertices[nxt][other_axis(a, b)] = 0;        \
             assignColor(nxt); \
             nxt++; \
  } \
@@ -74,16 +76,14 @@ class RegularDodecahedron : public Polyhedron {
         // yz plane rect (8-11)
         doubling(2, 1, iphi, phi);
 
-        // xz plane rect (16-19)
+        // xz plane rect (12-15)
         doubling(2, 0, phi, iphi);
 
-        // xy plane rect (12-15)
+        // xy plane rect (16-19)
         doubling(1, 0, iphi, phi);
     }
 
     void initFaces() {
-        int faceInd = 0;
-
         // axis=0 => x-axis is normal => yz plane
         // mask has bits set for the directional signs of the other two non-normal components
         // this mask has only two bits
@@ -103,11 +103,13 @@ class RegularDodecahedron : public Polyhedron {
             int plane_a_mask = compo_axis_2 * (1 << axis_3);
             int plane_b_mask = compo_axis_2 * (1 << axis_3) + (1 << axis);
 
-            indices[faceInd++] = getVertPlane(axis, mask);
-            indices[faceInd++] = getVertPenta(penta_a);
-            indices[faceInd++] = getVertPlane(axis_2, plane_a_mask);
-            indices[faceInd++] = getVertPlane(axis_2, plane_b_mask);
-            indices[faceInd++] = getVertPenta(penta_b);
+            unsigned int v1 = getVertPlane(axis, mask),
+                    v2 = getVertPenta(penta_a),
+                    v3 = getVertPlane(axis_2, plane_a_mask),
+                    v4 = getVertPlane(axis_2, plane_b_mask),
+                    v5 = getVertPenta(penta_b);
+
+            faces.push_back({v1, v2, v3, v4, v5});
         };
 
         for (int axis = 0; axis < 3; axis++) {
@@ -118,7 +120,7 @@ class RegularDodecahedron : public Polyhedron {
     }
 
 public:
-    RegularDodecahedron(float scale_arg = 1.0f) : Polyhedron(scale_arg, 5) {
+    RegularDodecahedron(float scale_arg = 1.0f) : Polyhedron(scale_arg) {
 #ifndef TEST
         initVertices();
         initFaces();

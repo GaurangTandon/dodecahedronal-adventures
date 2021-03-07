@@ -2,31 +2,9 @@
 #define A0_Polyhedron_H
 
 #include <GLFW/glfw3.h>
+#include <vector>
 
 //#define TEST
-
-//float COLORS[20][3] = {
-//        {242, 171, 195},
-//        {47,  233, 204},
-//        {34,  154, 14},
-//        {153, 116, 202},
-//        {219, 8,   62},
-//        {83,  15,  236},
-//        {49,  177, 168},
-//        {236, 183, 123},
-//        {81,  92,  82},
-//        {114, 232, 177},
-//        {96,  86,  3},
-//        {51,  95,  95},
-//        {131, 195, 180},
-//        {240, 85,  219},
-//        {116, 213, 201},
-//        {114, 156, 154},
-//        {13,  213, 195},
-//        {85,  113, 146},
-//        {88,  59,  225},
-//        {101, 100, 178}
-//};
 
 float COLORS[20][3] = {
         {255, 0,   0},
@@ -58,15 +36,14 @@ float COLORS[20][3] = {
 
 class Polyhedron {
 private:
-    int vertCountPerFace;
-    int faceCount;
+    unsigned int indices[100];
 
 protected:
     float scale;
 
 #ifndef TEST
     float vertices[20][6];
-    unsigned int indices[60];
+    std::vector <std::vector<unsigned int>> faces;
 #endif
     unsigned int vao_id;
     unsigned int vbo_id;
@@ -125,7 +102,17 @@ protected:
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
     }
 
+    void convertFacesToIndices() {
+        int ind = 0;
+        for (auto &face : faces) {
+            for (auto i : face) {
+                indices[ind++] = i;
+            }
+        }
+    }
+
     void finishedInit() {
+        convertFacesToIndices();
         setupVertexObjects();
         setupElmBuffObjects();
     }
@@ -137,9 +124,7 @@ protected:
     }
 
 public:
-    Polyhedron(float scale_arg = 1.0f, int vertCount = 5, int faces = 12) : scale(scale_arg),
-                                                                            vertCountPerFace(vertCount),
-                                                                            faceCount(faces) {
+    Polyhedron(float scale_arg = 1.0f) : scale(scale_arg) {
         setupVertexAttribs();
     }
 
@@ -157,10 +142,16 @@ public:
 #else
         const int TRIANGLE_SIDES = 3;
 
-        for (int i = 0; i < faceCount; i++) {
-            auto offset = vertCountPerFace * i * sizeof(unsigned int);
+        int faceCount = faces.size();
+        int vertsDone = 0;
 
-            glDrawElements(GL_TRIANGLE_FAN, vertCountPerFace, GL_UNSIGNED_INT, (void *) offset);
+        for (int i = 0; i < faceCount; i++) {
+            auto offset = vertsDone * sizeof(unsigned int);
+            auto vertCount = faces[i].size();
+
+            glDrawElements(GL_TRIANGLE_FAN, vertCount, GL_UNSIGNED_INT, (void *) offset);
+
+            vertsDone += vertCount;
         }
 #endif
     }
