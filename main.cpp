@@ -120,7 +120,7 @@ void renderLoop(GLFWwindow *window) {
     shader.use();
     shader.initMatrixes();
 
-    auto object = Unidecagon(0.5f);
+    auto object = RegularDodecahedron(0.5f);
 
     Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 

@@ -2,10 +2,7 @@
 #define A0_REGULAR_DODEC_H
 
 #include <cmath>
-#include <numeric>
-#include <iomanip>
 #include "polyhedron.h"
-
 
 // given two axis, returns the third axis
 int other_axis(const int a, const int b) {
@@ -20,7 +17,14 @@ int insert_between(const int idx, const int mask) {
     if (idx == 0) return mask << 1;
     if (idx == 2) return mask;
 
-    return (bit(mask, 2) << 2) + bit(mask, 1);
+    return (bit(mask, 1) << 2) + bit(mask, 0);
+}
+
+int remove_between(const int idx, int mask) {
+    if (idx == 0) return mask >> 1;
+    else if (idx == 1) return ((mask & 4) >> 1) + (mask & 1);
+    mask &= 0b011;
+    return mask;
 }
 
 // Reference: https://en.wikipedia.org/wiki/Regular_dodecahedron#Cartesian_coordinates
@@ -102,6 +106,8 @@ class RegularDodecahedron : public Polyhedron {
 
             int plane_a_mask = compo_axis_2 * (1 << axis_3);
             int plane_b_mask = compo_axis_2 * (1 << axis_3) + (1 << axis);
+            plane_a_mask = remove_between(axis_2, plane_a_mask);
+            plane_b_mask = remove_between(axis_2, plane_b_mask);
 
             unsigned int v1 = getVertPlane(axis, mask),
                     v2 = getVertPenta(penta_a),
