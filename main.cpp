@@ -51,6 +51,7 @@ unsigned int setupVertexObjects() {
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *) 0);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *) (3 * sizeof(float)));
 
+    // we just initiated two vertex attrib arrays above, we now initialize them below
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
 
@@ -84,8 +85,9 @@ void updateFrame(GLFWwindow *_window) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void drawTriangles(unsigned int shader_prog_id, unsigned int vao_id) {
-    glUseProgram(shader_prog_id);
+void drawTriangles(Shader &shader, unsigned int vao_id) {
+    shader.use();
+
     glBindVertexArray(vao_id);
 
     glDrawElements(GL_TRIANGLE_FAN, 5, GL_UNSIGNED_INT, 0);
@@ -100,13 +102,15 @@ void renderLoop(GLFWwindow *window) {
     auto ebo_id = setupElmBuffObjects();
 
     auto shader = Shader("shader.vs", "shader.fs");
+    shader.use();
+    shader.initMatrixes();
 
     while (not glfwWindowShouldClose(window)) {
         processInput(window);
 
         updateFrame(window);
 
-        drawTriangles(shader.get_id(), vao_id);
+        drawTriangles(shader, vao_id);
 
         // swap the currently computed render buffers with whatever is in the
         // window currently
@@ -118,7 +122,6 @@ void renderLoop(GLFWwindow *window) {
     glDeleteVertexArrays(1, &vao_id);
     glDeleteBuffers(1, &vbo_id);
     glDeleteBuffers(1, &ebo_id);
-    glDeleteProgram(shader.get_id());
 }
 
 int main() {

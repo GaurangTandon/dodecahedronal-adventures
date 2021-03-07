@@ -1,15 +1,18 @@
 #ifndef A0_SHADER_H
 #define A0_SHADER_H
 
-// TODO: include only as much as required
 #include<glad/glad.h>
 
-#include <glm/glm.hpp>
+#include <glm/mat4x4.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <fstream>
 #include <sstream>
 
 class Shader {
     int id;
+    glm::mat4 view;
+    glm::mat4 model;
+    glm::mat4 projection;
 
     int compiler(GLenum shaderType, const char *path) {
         std::ifstream shader(path);
@@ -34,7 +37,14 @@ public:
         return id;
     }
 
-    Shader(const char *vertShaderPath, const char *fragShaderPath) {
+    void setMatrix(const char *name, const glm::mat4 &value) {
+        auto loc = glGetUniformLocation(id, name);
+        glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(value));
+    }
+
+    Shader(const char *vertShaderPath, const char *fragShaderPath) : model(glm::mat4(1.0f)),
+                                                                     projection(glm::mat4(1.0f)),
+                                                                     view(glm::mat4(1.0f)) {
         int vertShaderId = compiler(GL_VERTEX_SHADER, vertShaderPath);
         int fragShaderId = compiler(GL_FRAGMENT_SHADER, fragShaderPath);
 
@@ -54,6 +64,20 @@ public:
             glDeleteShader(vertShaderId);
             glDeleteShader(fragShaderId);
         }
+    }
+
+    ~Shader() {
+        glDeleteProgram(id);
+    }
+
+    void use() {
+        glUseProgram(id);
+    }
+
+    void initMatrixes() {
+        setMatrix("model", model);
+        setMatrix("view", view);
+        setMatrix("projection", projection);
     }
 };
 
