@@ -77,7 +77,7 @@ void frameSizeCallback(GLFWwindow *_window, int width, int height) {
 }
 
 void processInput(GLFWwindow *window, Shader &shader) {
-    std::vector <std::tuple<int, int, int>> mappings = {
+    std::vector <std::tuple<int, int, int>> objectMappings = {
             {GLFW_KEY_Q, 0, 1},
             {GLFW_KEY_A, 0, -1},
             {GLFW_KEY_W, 1, 1},
@@ -86,13 +86,29 @@ void processInput(GLFWwindow *window, Shader &shader) {
             {GLFW_KEY_D, 2, -1}
     };
 
+    std::vector <std::tuple<int, int, int>> cameraMappings = {
+            {GLFW_KEY_R, 0, 1},
+            {GLFW_KEY_F, 0, -1},
+            {GLFW_KEY_T, 1, 1},
+            {GLFW_KEY_G, 1, -1},
+            {GLFW_KEY_Y, 2, 1},
+            {GLFW_KEY_H, 2, -1}
+    };
+
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
     }
 
-    for (auto &[key, axis, dir] : mappings) {
+    for (auto &[key, axis, dir] : objectMappings) {
         if (glfwGetKey(window, key) == GLFW_PRESS) {
-            shader.move(axis, dir);
+            shader.moveObject(axis, dir);
+            break;
+        }
+    }
+
+    for (auto &[key, axis, dir] : cameraMappings) {
+        if (glfwGetKey(window, key) == GLFW_PRESS) {
+            shader.moveCamera(axis, dir);
             break;
         }
     }

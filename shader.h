@@ -86,14 +86,25 @@ public:
         setMatrix("projection", projection);
     }
 
-    void move(int axis, int dir) {
+    glm::vec3 getTranslation(int axis, int dir) {
         float speed = 0.5f * (currentFrameTime - previousFrameTime);
 
         glm::vec3 trans;
         trans[axis] = dir * speed;
 
+        return trans;
+    }
+
+    void moveObject(int axis, int dir) {
+        auto trans = getTranslation(axis, dir);
         model = glm::translate(model, trans);
         setMatrix("model", model);
+    }
+
+    void moveCamera(int axis, int dir) {
+        auto trans = getTranslation(axis, dir);
+        view = glm::translate(view, trans);
+        setMatrix("view", view);
     }
 };
 
