@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "regular_dodec.h"
+#include "camera.h"
 
 const unsigned int SCREEN_WIDTH = 1280;
 const unsigned int SCREEN_HEIGHT = 720;
@@ -59,8 +60,20 @@ void updateFrame(GLFWwindow *_window) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void drawObjects(Shader &shader, Dodecahedron &obj) {
+void calcProjections(Camera &camera, Shader &shader) {
+    // pass projection matrix to shader (note that in this case it could change every frame)
+    auto projection = glm::perspective(glm::radians(camera.Zoom), (float) SCREEN_WIDTH / (float) SCREEN_HEIGHT, 0.1f,
+                                       100.0f);
+    shader.setMatrix("projection", projection);
+
+    // camera/view transformation
+    auto view = camera.GetViewMatrix();
+    shader.setMatrix("view", view);
+}
+
+void drawObjects(Camera &camera, Shader &shader, Dodecahedron &obj) {
     shader.use();
+    calcProjections(camera, shader);
     obj.draw();
 }
 
@@ -72,14 +85,16 @@ void renderLoop(GLFWwindow *window) {
     shader.use();
     shader.initMatrixes();
 
-    auto object = RegularDodecahedron();
+    auto object = RegularDodecahedron(0.5f);
+
+    Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
     while (not glfwWindowShouldClose(window)) {
         processInput(window, shader);
 
         updateFrame(window);
 
-        drawObjects(shader, object);
+        drawObjects(camera, shader, object);
 
         // swap the currently computed render buffers with whatever is in the
         // window currently

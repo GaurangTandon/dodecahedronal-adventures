@@ -127,8 +127,10 @@ class RegularDodecahedron : public Dodecahedron {
 
 public:
     RegularDodecahedron(float scale_arg = 1.0f) : Dodecahedron(scale_arg) {
-//        initVertices();
-//        initFaces();
+#ifndef TEST
+        initVertices();
+        initFaces();
+#endif
         finishedInit();
     }
 };
