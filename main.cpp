@@ -72,7 +72,7 @@ void calcProjections(Camera &camera, Shader &shader) {
     shader.setMatrix("view", view);
 }
 
-void drawObjects(Camera &camera, Shader &shader, Dodecahedron &obj) {
+void drawObjects(Camera &camera, Shader &shader, Polyhedron &obj) {
     shader.use();
     calcProjections(camera, shader);
     obj.draw();

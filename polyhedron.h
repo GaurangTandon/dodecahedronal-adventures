@@ -1,12 +1,10 @@
-#ifndef A0_DODECAHEDRON_H
-#define A0_DODECAHEDRON_H
+#ifndef A0_Polyhedron_H
+#define A0_Polyhedron_H
 
 #include <vector>
 #include <GLFW/glfw3.h>
 
 //#define TEST
-
-const int FACE_COUNT = 12;
 
 //float COLORS[20][3] = {
 //        {242, 171, 195},
@@ -59,10 +57,11 @@ float COLORS[20][3] = {
         {150, 90,  120}
 };
 
-class Dodecahedron {
+class Polyhedron {
 protected:
     float scale;
     int vertCountPerFace;
+    int faceCount;
 
 #ifndef TEST
     float vertices[20][6];
@@ -137,11 +136,13 @@ protected:
     }
 
 public:
-    Dodecahedron(float scale_arg = 1.0f, int vertCount = 5) : scale(scale_arg), vertCountPerFace(vertCount) {
+    Polyhedron(float scale_arg = 1.0f, int vertCount = 5, int faces = 12) : scale(scale_arg),
+                                                                              vertCountPerFace(vertCount),
+                                                                              faceCount(faces) {
         setupVertexAttribs();
     }
 
-    ~Dodecahedron() {
+    ~Polyhedron() {
         glDeleteVertexArrays(1, &vao_id);
         glDeleteBuffers(1, &vbo_id);
         glDeleteBuffers(1, &ebo_id);
@@ -153,7 +154,7 @@ public:
 #ifdef TEST
         glDrawElements(GL_TRIANGLE_FAN, 5, GL_UNSIGNED_INT, (void *) 0);
 #else
-        for (int i = 0; i < FACE_COUNT; i++) {
+        for (int i = 0; i < faceCount; i++) {
             auto offset = vertCountPerFace * i * sizeof(unsigned int);
             glDrawElements(GL_TRIANGLE_FAN, vertCountPerFace, GL_UNSIGNED_INT, (void *) offset);
             glDrawElements(GL_LINE_LOOP, vertCountPerFace, GL_UNSIGNED_INT, (void *) offset);
@@ -163,4 +164,4 @@ public:
 };
 
 
-#endif //A0_DODECAHEDRON_H
+#endif //A0_Polyhedron_H

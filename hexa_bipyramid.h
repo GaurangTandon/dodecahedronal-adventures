@@ -1,10 +1,10 @@
 #ifndef A0_HEXA_BIPYRAMID_H
 #define A0_HEXA_BIPYRAMID_H
 
-#include "dodecahedron.h"
+#include "polyhedron.h"
 #include <cmath>
 
-class HexagonalBipyramid : public Dodecahedron {
+class HexagonalBipyramid : public Polyhedron {
     void initVertices() {
         int ind = 0;
 
@@ -39,7 +39,7 @@ class HexagonalBipyramid : public Dodecahedron {
     }
 
 public:
-    HexagonalBipyramid(float scale_arg = 1.0f) : Dodecahedron(scale_arg, 3) {
+    HexagonalBipyramid(float scale_arg = 1.0f) : Polyhedron(scale_arg, 3) {
         initVertices();
         initVertices();
         finishedInit();

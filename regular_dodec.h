@@ -2,7 +2,7 @@
 #define A0_REGULAR_DODEC_H
 
 #include <cmath>
-#include "dodecahedron.h"
+#include "polyhedron.h"
 
 
 // given two axis, returns the third axis
@@ -22,7 +22,7 @@ int insert_between(const int idx, const int mask) {
 }
 
 // Reference: https://en.wikipedia.org/wiki/Regular_dodecahedron#Cartesian_coordinates
-class RegularDodecahedron : public Dodecahedron {
+class RegularDodecahedron : public Polyhedron {
     // mask = {z,y,x} in this order
     int getVertPenta(int mask) {
         return mask;
@@ -118,7 +118,7 @@ class RegularDodecahedron : public Dodecahedron {
     }
 
 public:
-    RegularDodecahedron(float scale_arg = 1.0f) : Dodecahedron(scale_arg, 5) {
+    RegularDodecahedron(float scale_arg = 1.0f) : Polyhedron(scale_arg, 5) {
 #ifndef TEST
         initVertices();
         initFaces();
