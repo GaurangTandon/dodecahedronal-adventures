@@ -4,10 +4,6 @@
 #include <cmath>
 #include "dodecahedron.h"
 
-float random_float() {
-    int r = rand() % 100;
-    return float(r) / 100.0f;
-}
 
 // given two axis, returns the third axis
 int other_axis(const int a, const int b) {
@@ -41,9 +37,9 @@ class RegularDodecahedron : public Dodecahedron {
     void initVertices() {
 
 #define assignColor(ind) \
-    vertices[ind][3] = random_float();\
-    vertices[ind][4] = random_float();\
-    vertices[ind][5] = random_float();
+    vertices[ind][3] = COLORS[ind][0] / 255;\
+    vertices[ind][4] = COLORS[ind][1] / 255;\
+    vertices[ind][5] = COLORS[ind][2] / 255;
 
 #define tripling(x, y, z) \
     for (int k = 0; k <= 1; k++) { \

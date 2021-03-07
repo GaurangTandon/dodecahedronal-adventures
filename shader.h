@@ -31,6 +31,14 @@ class Shader {
 
         int success;
         glGetShaderiv(shader_id, GL_COMPILE_STATUS, &success);
+
+        if (!success) {
+            GLchar infoLog[1024];
+            glGetShaderInfoLog(shader_id, 1024, NULL, infoLog);
+            std::cout << "ERROR::SHADER_COMPILATION_ERROR of type: " << shaderType << "\n" << infoLog
+                      << "\n -- --------------------------------------------------- -- " << std::endl;
+        }
+
         assert(success);
 
         return shader_id;
