@@ -4,16 +4,28 @@
 #include <cmath>
 #include "dodecahedron.h"
 
+float random_float() {
+    int r = rand() % 100;
+    return r / 100.0f;
+}
+
 // Reference: https://en.wikipedia.org/wiki/Regular_dodecahedron#Cartesian_coordinates
-class RegularDodecahedron : Dodecahedron {
+class RegularDodecahedron : public Dodecahedron {
     void initVertices() {
+
+#define assignColor(ind) \
+    vertices[ind][3] = random_float();\
+    vertices[ind][4] = random_float();\
+    vertices[ind][5] = random_float();
+
 #define tripling(x, y, z) \
     for (int i = 0; i <= 1; i++) { \
         for (int j = 0; j <= 1; j++) { \
             for (int k = 0; k <= 1; k++) { \
-                vertices[nxt][0] = (1 - 2 * i) * x; \
-                vertices[nxt][1] = (1 - 2 * j) * y; \
-                vertices[nxt][2] = (1 - 2 * k) * z; \
+                vertices[nxt][0] = (1 - 2 * i) * x * scale; \
+                vertices[nxt][1] = (1 - 2 * j) * y * scale; \
+                vertices[nxt][2] = (1 - 2 * k) * z * scale; \
+                assignColor(nxt); \
                 nxt++; \
  } \
  } \
@@ -22,9 +34,10 @@ class RegularDodecahedron : Dodecahedron {
 #define doubling(a, b, x, y) \
     for (int i = 0; i <= 1; i++) { \
         for (int j = 0; j <= 1; j++) { \
-            vertices[nxt][a] = (1 - 2 * i) * x; \
-            vertices[nxt][b] = (1 - 2 * j) * y; \
+            vertices[nxt][a] = (1 - 2 * i) * x * scale; \
+            vertices[nxt][b] = (1 - 2 * j) * y * scale; \
             vertices[nxt][2 + 1 + 0 - a - b] = 0; \
+            assignColor(nxt); \
             nxt++; \
  } \
  }
@@ -57,16 +70,17 @@ class RegularDodecahedron : Dodecahedron {
                 }
             }
 
-            faces.push_back({w, x, b, a});
+
         };
 
         facer(0b010, 0b011, 0b110, 0b111, 0, -1);
     }
 
 public:
-    RegularDodecahedron() : Dodecahedron() {
+    RegularDodecahedron(float scale_arg = 1.0f) : Dodecahedron(scale_arg) {
         initVertices();
         initFaces();
+        finishedInit();
     }
 };
 
