@@ -10,8 +10,8 @@ const int VERT_PER_FACE_COUNT = 5;
 class Dodecahedron {
 protected:
     float scale;
-    float vertices[20][6];
-    unsigned int indices[60];
+//    float vertices[20][6];
+//    unsigned int indices[60];
     unsigned int vao_id;
     unsigned int vbo_id;
     unsigned int ebo_id;
@@ -20,14 +20,17 @@ protected:
     // Test vertices for a rainbow pentagon
     // set the indices element buffer object appropriately
 //@formatter:off
-//    float vertices[] = {
-//            // vertices, colors
-//            0.5f,  0.5f, 0.0f, 1, 0, 0,
-//            0.5f, -0.5f, 0.0f, 0, 1, 0,
-//            -0.5f, -0.5f, 0.0f, 0, 0, 1,
-//            -0.5f,  0.5f, 0.0f, 0, 1, 1,
-//            0.0f,  1.0f, 0.0f, 1, 0, 1
-//    };
+    float vertices[5][6] = {
+            // vertices, colors
+            0.5f,  0.5f, 0.0f, 1, 0, 0,
+            0.5f, -0.5f, 0.0f, 0, 1, 0,
+            -0.5f, -0.5f, 0.0f, 0, 0, 1,
+            -0.5f,  0.5f, 0.0f, 0, 1, 1,
+            0.0f,  1.0f, 0.0f, 1, 0, 1
+    };
+    unsigned int indices[5] = {
+            0, 1, 2, 3, 4
+    };
 //@formatter:on
 
     void setupVertexAttribs() {
@@ -84,10 +87,12 @@ public:
     void draw() {
         glBindVertexArray(vao_id);
 
-        for (int i = 0; i <= 0; i++) {
-            auto offset = VERT_PER_FACE_COUNT * i * sizeof(unsigned int);
-            glDrawElements(GL_TRIANGLE_FAN, VERT_PER_FACE_COUNT, GL_UNSIGNED_INT, (void *) offset);
-        }
+        glDrawElements(GL_TRIANGLE_FAN, 5, GL_UNSIGNED_INT, (void *) 0);
+
+//        for (int i = 0; i < FACE_COUNT; i++) {
+//            auto offset = VERT_PER_FACE_COUNT * i * sizeof(unsigned int);
+//            glDrawElements(GL_TRIANGLE_FAN, VERT_PER_FACE_COUNT, GL_UNSIGNED_INT, (void *) offset);
+//        }
     }
 };
 

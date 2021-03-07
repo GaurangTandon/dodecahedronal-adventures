@@ -115,11 +115,10 @@ int main() {
         return 2;
     }
 
-    glEnable(GL_DEPTH_TEST);
-
     glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-
     glfwSetFramebufferSizeCallback(window, frameSizeCallback);
+
+    glEnable(GL_DEPTH_TEST);
 
     renderLoop(window);
 
