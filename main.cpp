@@ -5,17 +5,22 @@
 #include <iostream>
 #include <cassert>
 
+#include "regular_dodec.h"
+
+const unsigned int SCREEN_WIDTH = 1280;
+const unsigned int SCREEN_HEIGHT = 720;
+
 // clockwise order (?)
 float vertices[] = {
         .5f, .5f, 0,
         .5f, -.5f, 0,
         -.5f, -.5f, 0,
-        -.5f, .5f, 0
+        -.5f, .5f, 0,
+        0, 1, 0
 };
 
 unsigned int indices[] = {
-        0, 1, 3,
-        1, 2, 3
+        0, 1, 2, 3, 4
 };
 
 unsigned int setupEnableVertexAttribs() {
@@ -72,13 +77,14 @@ void processInput(GLFWwindow *window) {
 
 void updateFrame(GLFWwindow *_window) {
     glClearColor(0.0f, 0.5f, 0.5f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void drawTriangles(unsigned int shader_prog_id, unsigned int vao_id) {
     glUseProgram(shader_prog_id);
     glBindVertexArray(vao_id);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+    glDrawElements(GL_TRIANGLE_FAN, 5, GL_UNSIGNED_INT, 0);
 }
 
 void renderLoop(GLFWwindow *window) {
@@ -120,7 +126,7 @@ int main() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    auto window = glfwCreateWindow(800, 600, "Hello World", NULL, NULL);
+    auto window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Hello World", NULL, NULL);
     if (not window) {
         std::cout << "Oops, no window for you!" << std::endl;
         glfwTerminate();
@@ -130,11 +136,14 @@ int main() {
     glfwMakeContextCurrent(window);
 
     if (not gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
-        std::cout << "Oops, no glad no for you" << std::endl;
+        std::cout << "Oops, no glad for you!" << std::endl;
+        glfwTerminate();
         return 2;
     }
 
-    glViewport(0, 0, 800, 600);
+    glEnable(GL_DEPTH_TEST);
+
+    glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
     glfwSetFramebufferSizeCallback(window, frameSizeCallback);
 
