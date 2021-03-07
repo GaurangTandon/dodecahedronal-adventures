@@ -10,14 +10,16 @@
 const unsigned int SCREEN_WIDTH = 1280;
 const unsigned int SCREEN_HEIGHT = 720;
 
-// clockwise order (?)
+//@formatter:off
 float vertices[] = {
-        .5f, .5f, 0,
-        .5f, -.5f, 0,
-        -.5f, -.5f, 0,
-        -.5f, .5f, 0,
-        0, 1, 0
+        // vertices, colors
+         0.5f,  0.5f, 0.0f, 1, 0, 0,
+         0.5f, -0.5f, 0.0f, 0, 1, 0,
+        -0.5f, -0.5f, 0.0f, 0, 0, 1,
+        -0.5f,  0.5f, 0.0f, 0, 1, 1,
+         0.0f,  1.0f, 0.0f, 1, 0, 1
 };
+//@formatter:on
 
 unsigned int indices[] = {
         0, 1, 2, 3, 4
@@ -28,9 +30,6 @@ unsigned int setupEnableVertexAttribs() {
     unsigned int vao_id;
     glGenVertexArrays(1, &vao_id);
     glBindVertexArray(vao_id);
-
-    // TODO: passing vao_id breaks the code; not sure why
-    glEnableVertexAttribArray(0);
 
     return vao_id;
 }
@@ -46,9 +45,14 @@ unsigned int setupVertexObjects() {
     // copy buffer data from memory into array buffer for static drawing into the
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    // This zero corresponds to the zero we mentioned in layout (location=0)
-    // still I'm not super clear on this
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+    // The first argument (0/1) corresponds to the index we mentioned in layout (location=0/1) in the vertex shader
+    // The second argument is size of vector
+    // last two are stride and starting location respectively
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *) 0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *) (3 * sizeof(float)));
+
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
 
     return vbo_id;
 }
