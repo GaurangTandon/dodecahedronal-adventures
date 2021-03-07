@@ -2,8 +2,10 @@
 #include <GLFW/glfw3.h>
 
 #include "shader.h"
+#include <tuple>
 #include <iostream>
 #include <cassert>
+#include <vector>
 
 #include "regular_dodec.h"
 
@@ -74,9 +76,25 @@ void frameSizeCallback(GLFWwindow *_window, int width, int height) {
     glViewport(0, 0, width, height);
 }
 
-void processInput(GLFWwindow *window) {
+void processInput(GLFWwindow *window, Shader &shader) {
+    std::vector <std::tuple<int, int, int>> mappings = {
+            {GLFW_KEY_Q, 0, 1},
+            {GLFW_KEY_A, 0, -1},
+            {GLFW_KEY_W, 1, 1},
+            {GLFW_KEY_S, 1, -1},
+            {GLFW_KEY_E, 2, 1},
+            {GLFW_KEY_D, 2, -1}
+    };
+
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
+    }
+
+    for (auto &[key, axis, dir] : mappings) {
+        if (glfwGetKey(window, key) == GLFW_PRESS) {
+            shader.move(axis, dir);
+            break;
+        }
     }
 }
 
@@ -106,7 +124,7 @@ void renderLoop(GLFWwindow *window) {
     shader.initMatrixes();
 
     while (not glfwWindowShouldClose(window)) {
-        processInput(window);
+        processInput(window, shader);
 
         updateFrame(window);
 

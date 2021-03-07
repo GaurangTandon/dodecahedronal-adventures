@@ -4,15 +4,19 @@
 #include<glad/glad.h>
 
 #include <glm/mat4x4.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <fstream>
 #include <sstream>
+#include <iostream>
 
 class Shader {
     int id;
-    glm::mat4 view;
     glm::mat4 model;
     glm::mat4 projection;
+    glm::mat4 view;
+    float previousFrameTime;
+    float currentFrameTime;
 
     int compiler(GLenum shaderType, const char *path) {
         std::ifstream shader(path);
@@ -71,6 +75,8 @@ public:
     }
 
     void use() {
+        previousFrameTime = currentFrameTime;
+        currentFrameTime = glfwGetTime();
         glUseProgram(id);
     }
 
@@ -78,6 +84,16 @@ public:
         setMatrix("model", model);
         setMatrix("view", view);
         setMatrix("projection", projection);
+    }
+
+    void move(int axis, int dir) {
+        float speed = 0.5f * (currentFrameTime - previousFrameTime);
+
+        glm::vec3 trans;
+        trans[axis] = dir * speed;
+
+        model = glm::translate(model, trans);
+        setMatrix("model", model);
     }
 };
 
