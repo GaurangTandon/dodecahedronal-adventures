@@ -30,7 +30,7 @@ protected:
 //    };
 //@formatter:on
 
-    void setupEnableVertexAttribs() {
+    void setupVertexAttribs() {
         // create a VAO so that we can set once
         glGenVertexArrays(1, &vao_id);
         glBindVertexArray(vao_id);
@@ -71,8 +71,8 @@ protected:
     }
 
 public:
-    Dodecahedron(float scale = 1.0f) : scale(scale) {
-        setupEnableVertexAttribs();
+    Dodecahedron(float scale_arg = 1.0f) : scale(scale_arg) {
+        setupVertexAttribs();
     }
 
     ~Dodecahedron() {
@@ -84,7 +84,7 @@ public:
     void draw() {
         glBindVertexArray(vao_id);
 
-        for (int i = 0; i < FACE_COUNT; i++) {
+        for (int i = 0; i <= 0; i++) {
             auto offset = VERT_PER_FACE_COUNT * i * sizeof(unsigned int);
             glDrawElements(GL_TRIANGLE_FAN, VERT_PER_FACE_COUNT, GL_UNSIGNED_INT, (void *) offset);
         }
