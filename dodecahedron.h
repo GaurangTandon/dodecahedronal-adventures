@@ -7,7 +7,6 @@
 //#define TEST
 
 const int FACE_COUNT = 12;
-const int VERT_PER_FACE_COUNT = 5;
 
 //float COLORS[20][3] = {
 //        {242, 171, 195},
@@ -49,8 +48,8 @@ float COLORS[20][3] = {
         {125, 0,   125},
         {125, 125, 0},
 
-        {40, 120, 200},
-        {120, 40, 200},
+        {40,  120, 200},
+        {120, 40,  200},
         {120, 200, 40},
 
         {90,  120, 150},
@@ -63,6 +62,8 @@ float COLORS[20][3] = {
 class Dodecahedron {
 protected:
     float scale;
+    int vertCountPerFace;
+
 #ifndef TEST
     float vertices[20][6];
     unsigned int indices[60];
@@ -129,8 +130,14 @@ protected:
         setupElmBuffObjects();
     }
 
+    void assignColor(int ind) {
+        vertices[ind][3] = COLORS[ind][0] / 255;
+        vertices[ind][4] = COLORS[ind][1] / 255;
+        vertices[ind][5] = COLORS[ind][2] / 255;
+    }
+
 public:
-    Dodecahedron(float scale_arg = 1.0f) : scale(scale_arg) {
+    Dodecahedron(float scale_arg = 1.0f, int vertCount = 5) : scale(scale_arg), vertCountPerFace(vertCount) {
         setupVertexAttribs();
     }
 
@@ -147,9 +154,9 @@ public:
         glDrawElements(GL_TRIANGLE_FAN, 5, GL_UNSIGNED_INT, (void *) 0);
 #else
         for (int i = 0; i < FACE_COUNT; i++) {
-            auto offset = VERT_PER_FACE_COUNT * i * sizeof(unsigned int);
-            glDrawElements(GL_TRIANGLE_FAN, VERT_PER_FACE_COUNT, GL_UNSIGNED_INT, (void *) offset);
-            glDrawElements(GL_LINE_LOOP, VERT_PER_FACE_COUNT, GL_UNSIGNED_INT, (void *) offset);
+            auto offset = vertCountPerFace * i * sizeof(unsigned int);
+            glDrawElements(GL_TRIANGLE_FAN, vertCountPerFace, GL_UNSIGNED_INT, (void *) offset);
+            glDrawElements(GL_LINE_LOOP, vertCountPerFace, GL_UNSIGNED_INT, (void *) offset);
         }
 #endif
     }

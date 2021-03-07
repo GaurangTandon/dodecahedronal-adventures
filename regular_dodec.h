@@ -36,10 +36,6 @@ class RegularDodecahedron : public Dodecahedron {
 
     void initVertices() {
 
-#define assignColor(ind) \
-    vertices[ind][3] = COLORS[ind][0] / 255;\
-    vertices[ind][4] = COLORS[ind][1] / 255;\
-    vertices[ind][5] = COLORS[ind][2] / 255;
 
 #define tripling(x, y, z) \
     for (int k = 0; k <= 1; k++) { \
@@ -122,7 +118,7 @@ class RegularDodecahedron : public Dodecahedron {
     }
 
 public:
-    RegularDodecahedron(float scale_arg = 1.0f) : Dodecahedron(scale_arg) {
+    RegularDodecahedron(float scale_arg = 1.0f) : Dodecahedron(scale_arg, 5) {
 #ifndef TEST
         initVertices();
         initFaces();

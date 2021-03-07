@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "regular_dodec.h"
+#include "hexa_bipyramid.h"
 #include "camera.h"
 
 const unsigned int SCREEN_WIDTH = 1280;
@@ -85,7 +86,7 @@ void renderLoop(GLFWwindow *window) {
     shader.use();
     shader.initMatrixes();
 
-    auto object = RegularDodecahedron(0.5f);
+    auto object = HexagonalBipyramid(0.5f);
 
     Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
