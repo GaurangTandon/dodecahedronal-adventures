@@ -60,7 +60,6 @@ class Polyhedron {
 private:
     int vertCountPerFace;
     int faceCount;
-    int triangleCount;
 
 protected:
     float scale;
@@ -68,7 +67,6 @@ protected:
 #ifndef TEST
     float vertices[20][6];
     unsigned int indices[60];
-    unsigned int final_indices[100];
 #endif
     unsigned int vao_id;
     unsigned int vbo_id;
@@ -86,7 +84,7 @@ protected:
             -0.5f,  0.5f, 0.0f, 0, 1, 1,
             0.0f,  1.0f, 0.0f, 1, 0, 1
     };
-    unsigned int final_indices[5] = {
+    unsigned int indices[5] = {
             0, 1, 2, 3, 4
     };
 #endif
@@ -124,33 +122,10 @@ protected:
         // usually we always have to bind the created buffer to some GL buffer
         // and then insert data into that buffer
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo_id);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(final_indices), final_indices, GL_STATIC_DRAW);
-    }
-
-    void convertIndicesForTriangles() {
-        int ind = 0;
-
-        for (int i = 0; i < faceCount; i++) {
-            int offset = i * vertCountPerFace;
-
-            if (vertCountPerFace == 4) {
-                final_indices[ind++] = indices[offset];
-                final_indices[ind++] = indices[offset + 1];
-                final_indices[ind++] = indices[offset + 2];
-
-                final_indices[ind++] = indices[offset + 2];
-                final_indices[ind++] = indices[offset + 3];
-                final_indices[ind++] = indices[offset];
-            } else {
-                assert(false);
-            }
-        }
-
-        triangleCount = ind / 3;
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
     }
 
     void finishedInit() {
-        convertIndicesForTriangles();
         setupVertexObjects();
         setupElmBuffObjects();
     }
@@ -182,10 +157,10 @@ public:
 #else
         const int TRIANGLE_SIDES = 3;
 
-        for (int i = 0; i < triangleCount; i++) {
-            auto offset = TRIANGLE_SIDES * i * sizeof(unsigned int);
+        for (int i = 0; i < faceCount; i++) {
+            auto offset = vertCountPerFace * i * sizeof(unsigned int);
 
-            glDrawElements(GL_TRIANGLES, TRIANGLE_SIDES, GL_UNSIGNED_INT, (void *) offset);
+            glDrawElements(GL_TRIANGLE_FAN, vertCountPerFace, GL_UNSIGNED_INT, (void *) offset);
         }
 #endif
     }
