@@ -30,22 +30,27 @@ class Cube : public Polyhedron {
                 else if (axis == 1) x = 0, y = 2;
                 else x = 0, y = 1;
 
-                for (int a = 0; a < 2; a++) {
-                    for (int b = 0; b < 2; b++) {
-                        int mask = (1 << x) * a + (1 << y) * b + (1 << axis) * side;
-                        indices[ind++] = mask;
-                    }
-                }
+#define insert(a, b) \
+                        {int mask = (1 << x) * a + (1 << y) * b + (1 << axis) * side;\
+                        indices[ind++] = mask;}
+
+                // insertion must be done in "grey codes"
+                insert(0, 0)
+                insert(0, 1)
+                insert(1, 1)
+                insert(1, 0)
             }
         }
     }
 
 public:
+
     Cube(float scale_arg = 1.0f) : Polyhedron(scale_arg, 4, 6) {
         initVertices();
         initFaces();
         finishedInit();
     }
+
 };
 
 #endif //A0_CUBE_H
