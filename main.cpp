@@ -141,39 +141,26 @@ void renderLoop(GLFWwindow *window) {
     shader.initMatrixes();
 
     float scale = 0.5f;
-    RegularDodecahedron object = RegularDodecahedron(scale);
-    int prevObject = CURR_OBJECT;
+    RegularDodecahedron reg = RegularDodecahedron(scale);
+    HexagonalBipyramid hex = HexagonalBipyramid(scale);
+    Unidecagon unid = Unidecagon(scale);
+    Cube cube = Cube(scale);
 
     Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
     while (not glfwWindowShouldClose(window)) {
         processInput(window, shader);
 
-        if (prevObject != CURR_OBJECT) {
-            std::cout << prevObject << " " << CURR_OBJECT << std::endl;
-
-//            switch (CURR_OBJECT) {
-//                case 0:
-//                    object = RegularDodecahedron(scale);
-//                    break;
-//                case 1:
-//                    object = HexagonalBipyramid(scale);
-//                    break;
-//                case 2:
-//                    object = Unidecagon(scale);
-//                    break;
-//                case 3:
-//                    object = Cube(scale);
-//                    break;
-//                default:
-//                    assert(false);
-//            }
-        }
-        prevObject = CURR_OBJECT;
-
         updateFrame(window);
 
-        drawObjects(camera, shader, object);
+        if (CURR_OBJECT == 0)
+            drawObjects(camera, shader, reg);
+        else if (CURR_OBJECT == 1)
+            drawObjects(camera, shader, hex);
+        else if (CURR_OBJECT == 2)
+            drawObjects(camera, shader, unid);
+        else
+            drawObjects(camera, shader, cube);
 
         // swap the currently computed render buffers with whatever is in the
         // window currently
