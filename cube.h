@@ -8,10 +8,10 @@ class Cube : public Polyhedron {
         for (int k = 0; k < 2; k++) {
             for (int j = 0; j < 2; j++) {
                 for (int i = 0; i < 2; i++) {
-                    vertices[vertCount][0] = (1 - 2 * i) * scale;
-                    vertices[vertCount][1] = (1 - 2 * j) * scale;
-                    vertices[vertCount][2] = (1 - 2 * k) * scale;
-                    vertCount++;
+                    vertices[totalVerts][0] = (1 - 2 * i) * scale;
+                    vertices[totalVerts][1] = (1 - 2 * j) * scale;
+                    vertices[totalVerts][2] = (1 - 2 * k) * scale;
+                    totalVerts++;
                 }
             }
         }

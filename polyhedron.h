@@ -35,7 +35,7 @@ protected:
     float scale;
 
     float vertices[200][6];
-    int vertCount;
+    int totalVerts;
     std::vector <std::vector<unsigned int>> faces;
 
     unsigned int vao_id;
@@ -81,17 +81,16 @@ protected:
 
     void convertFacesToIndices() {
         int ind = 0;
-        int nextInd = vertCount;
-        bool used[vertCount];
+        bool used[totalVerts];
         memset(used, 0, sizeof(used));
 
         // copy vertex a into next empty slot
         auto dupe = [&](auto a) {
-            vertices[vertCount][0] = vertices[a][0];
-            vertices[vertCount][1] = vertices[a][1];
-            vertices[vertCount][2] = vertices[a][2];
-            vertCount++;
-            return vertCount - 1;
+            vertices[totalVerts][0] = vertices[a][0];
+            vertices[totalVerts][1] = vertices[a][1];
+            vertices[totalVerts][2] = vertices[a][2];
+            totalVerts++;
+            return totalVerts - 1;
         };
 
         int faceInd = 0;
@@ -100,7 +99,7 @@ protected:
                 int target = i;
 
                 if (used[i]) target = dupe(i);
-                else used[target] = 1;
+                else used[target] = true;
 
                 std::cout << target << " " << faceInd << std::endl;
                 assignColor(target, faceInd);
@@ -118,7 +117,7 @@ protected:
     }
 
 public:
-    Polyhedron(float scale_arg = 1.0f) : scale(scale_arg), vertCount(0) {
+    Polyhedron(float scale_arg = 1.0f) : scale(scale_arg), totalVerts(0) {
         setupVertexAttribs();
     }
 
@@ -136,7 +135,7 @@ public:
 
         for (int i = 0; i < faceCount; i++) {
             auto offset = vertsDone * sizeof(unsigned int);
-            auto vertCount = faces[i].size();
+            int vertCount = int(faces[i].size());
 
             glDrawElements(GL_TRIANGLE_FAN, vertCount, GL_UNSIGNED_INT, (void *) offset);
 

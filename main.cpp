@@ -28,7 +28,7 @@ void frameSizeCallback(GLFWwindow *_window, int width, int height) {
 void processInput(GLFWwindow *window, Shader &shader) {
 #define pressed(x) (glfwGetKey(window, x) == GLFW_PRESS)
 
-    std::vector <std::tuple<int, int, int>> objectMappings = {
+    std::vector<std::tuple<int, int, int>> objectMappings = {
             {GLFW_KEY_Q, 0, 1},
             {GLFW_KEY_A, 0, -1},
             {GLFW_KEY_W, 1, 1},
@@ -37,7 +37,7 @@ void processInput(GLFWwindow *window, Shader &shader) {
             {GLFW_KEY_D, 2, -1}
     };
 
-    std::vector <std::tuple<int, int, int>> cameraMappings = {
+    std::vector<std::tuple<int, int, int>> cameraMappings = {
             {GLFW_KEY_R, 0, 1},
             {GLFW_KEY_F, 0, -1},
             {GLFW_KEY_T, 1, 1},
