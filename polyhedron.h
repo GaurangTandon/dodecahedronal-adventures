@@ -4,68 +4,45 @@
 #include <GLFW/glfw3.h>
 #include <vector>
 
-//#define TEST
-
 float COLORS[20][3] = {
-        {255, 0,   0},
-        {0,   255, 0},
-        {0,   0,   255},
+        {74, 78, 77},
+        {14, 154, 167},
+        {61, 164, 171},
+        {246, 205, 97},
 
-        {255, 0,   255},
-        {0,   255, 255},
-        {255, 255, 0},
+        {254, 138, 113},
+        {253, 244, 152},
+        {238, 64, 53},
+        {3, 146, 207},
 
-        {125, 0,   0},
-        {0,   125, 0},
-        {0,   0,   125},
-
-        {0,   125, 125},
-        {125, 0,   125},
-        {125, 125, 0},
-
-        {40,  120, 200},
-        {120, 40,  200},
-        {120, 200, 40},
-
-        {90,  120, 150},
-        {120, 90,  150},
-        {120, 150, 90},
-        {90,  150, 120},
-        {150, 90,  120}
+        {123, 192, 67},
+        {133, 68, 66},
+        {0, 135, 68},
+        {220, 237, 193}
 };
 
 class Polyhedron {
 private:
     unsigned int indices[100];
 
+    void assignColor(int ind, int colorInd) {
+        vertices[ind][3] = COLORS[colorInd][0] / 255;
+        vertices[ind][4] = COLORS[colorInd][1] / 255;
+        vertices[ind][5] = COLORS[colorInd][2] / 255;
+    }
+
 protected:
     float scale;
 
-#ifndef TEST
-    float vertices[20][6];
+    float vertices[200][6];
+    int vertCount;
     std::vector <std::vector<unsigned int>> faces;
-#endif
+
     unsigned int vao_id;
     unsigned int vbo_id;
     unsigned int ebo_id;
 
 protected:
-//@formatter:off
-#ifdef TEST
-    // Test vertices for a rainbow pentagon
-    float vertices[5][6] = {
-            // vertices, colors
-            0.5f,  0.5f, 0.0f, 1, 0, 0,
-            0.5f, -0.5f, 0.0f, 0, 1, 0,
-            -0.5f, -0.5f, 0.0f, 0, 0, 1,
-            -0.5f,  0.5f, 0.0f, 0, 1, 1,
-            0.0f,  1.0f, 0.0f, 1, 0, 1
-    };
-    unsigned int indices[5] = {
-            0, 1, 2, 3, 4
-    };
-#endif
-//@formatter:on
 
     void setupVertexAttribs() {
         // create a VAO so that we can set once
@@ -104,10 +81,33 @@ protected:
 
     void convertFacesToIndices() {
         int ind = 0;
+        int nextInd = vertCount;
+        bool used[vertCount];
+        memset(used, 0, sizeof(used));
+
+        // copy vertex a into next empty slot
+        auto dupe = [&](auto a) {
+            vertices[vertCount][0] = vertices[a][0];
+            vertices[vertCount][1] = vertices[a][1];
+            vertices[vertCount][2] = vertices[a][2];
+            vertCount++;
+            return vertCount - 1;
+        };
+
+        int faceInd = 0;
         for (auto &face : faces) {
             for (auto i : face) {
-                indices[ind++] = i;
+                int target = i;
+
+                if (used[i]) target = dupe(i);
+                else used[target] = 1;
+
+                std::cout << target << " " << faceInd << std::endl;
+                assignColor(target, faceInd);
+                indices[ind++] = target;
             }
+
+            faceInd++;
         }
     }
 
@@ -117,14 +117,8 @@ protected:
         setupElmBuffObjects();
     }
 
-    void assignColor(int ind) {
-        vertices[ind][3] = COLORS[ind][0] / 255;
-        vertices[ind][4] = COLORS[ind][1] / 255;
-        vertices[ind][5] = COLORS[ind][2] / 255;
-    }
-
 public:
-    Polyhedron(float scale_arg = 1.0f) : scale(scale_arg) {
+    Polyhedron(float scale_arg = 1.0f) : scale(scale_arg), vertCount(0) {
         setupVertexAttribs();
     }
 
@@ -137,11 +131,6 @@ public:
     void draw() {
         glBindVertexArray(vao_id);
 
-#ifdef TEST
-        glDrawElements(GL_TRIANGLE_FAN, 5, GL_UNSIGNED_INT, (void *) 0);
-#else
-        const int TRIANGLE_SIDES = 3;
-
         int faceCount = faces.size();
         int vertsDone = 0;
 
@@ -153,7 +142,6 @@ public:
 
             vertsDone += vertCount;
         }
-#endif
     }
 };
 

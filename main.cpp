@@ -19,12 +19,15 @@ const unsigned int SCREEN_HEIGHT = 720;
 bool ROTATING_X = false;
 bool ROTATING_Y = false;
 bool ROTATING_Z = false;
+int CURR_OBJECT = 0;
 
 void frameSizeCallback(GLFWwindow *_window, int width, int height) {
     glViewport(0, 0, width, height);
 }
 
 void processInput(GLFWwindow *window, Shader &shader) {
+#define pressed(x) (glfwGetKey(window, x) == GLFW_PRESS)
+
     std::vector <std::tuple<int, int, int>> objectMappings = {
             {GLFW_KEY_Q, 0, 1},
             {GLFW_KEY_A, 0, -1},
@@ -43,7 +46,7 @@ void processInput(GLFWwindow *window, Shader &shader) {
             {GLFW_KEY_H, 2, -1}
     };
 
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+    if (pressed(GLFW_KEY_ESCAPE)) {
         glfwSetWindowShouldClose(window, true);
         return;
     }
@@ -66,6 +69,23 @@ void processInput(GLFWwindow *window, Shader &shader) {
     // reset all rotations :P
     if (glfwGetKey(window, GLFW_KEY_V) == GLFW_PRESS) {
         ROTATING_X = ROTATING_Y = ROTATING_Z = false;
+        return;
+    }
+
+    if (pressed(GLFW_KEY_1)) {
+        CURR_OBJECT = 1;
+        return;
+    }
+    if (pressed(GLFW_KEY_2)) {
+        CURR_OBJECT = 2;
+        return;
+    }
+    if (pressed(GLFW_KEY_3)) {
+        CURR_OBJECT = 3;
+        return;
+    }
+    if (pressed(GLFW_KEY_0)) {
+        CURR_OBJECT = 0;
         return;
     }
 
@@ -120,12 +140,36 @@ void renderLoop(GLFWwindow *window) {
     shader.use();
     shader.initMatrixes();
 
-    auto object = RegularDodecahedron(0.5f);
+    float scale = 0.5f;
+    RegularDodecahedron object = RegularDodecahedron(scale);
+    int prevObject = CURR_OBJECT;
 
     Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
     while (not glfwWindowShouldClose(window)) {
         processInput(window, shader);
+
+        if (prevObject != CURR_OBJECT) {
+            std::cout << prevObject << " " << CURR_OBJECT << std::endl;
+
+//            switch (CURR_OBJECT) {
+//                case 0:
+//                    object = RegularDodecahedron(scale);
+//                    break;
+//                case 1:
+//                    object = HexagonalBipyramid(scale);
+//                    break;
+//                case 2:
+//                    object = Unidecagon(scale);
+//                    break;
+//                case 3:
+//                    object = Cube(scale);
+//                    break;
+//                default:
+//                    assert(false);
+//            }
+        }
+        prevObject = CURR_OBJECT;
 
         updateFrame(window);
 

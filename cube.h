@@ -5,16 +5,13 @@
 
 class Cube : public Polyhedron {
     void initVertices() {
-        int ind = 0;
-
         for (int k = 0; k < 2; k++) {
             for (int j = 0; j < 2; j++) {
                 for (int i = 0; i < 2; i++) {
-                    vertices[ind][0] = (1 - 2 * i) * scale;
-                    vertices[ind][1] = (1 - 2 * j) * scale;
-                    vertices[ind][2] = (1 - 2 * k) * scale;
-                    assignColor(ind);
-                    ind++;
+                    vertices[vertCount][0] = (1 - 2 * i) * scale;
+                    vertices[vertCount][1] = (1 - 2 * j) * scale;
+                    vertices[vertCount][2] = (1 - 2 * k) * scale;
+                    vertCount++;
                 }
             }
         }

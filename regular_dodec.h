@@ -47,11 +47,10 @@ class RegularDodecahedron : public Polyhedron {
     for (int k = 0; k <= 1; k++) { \
         for (int j = 0; j <= 1; j++) { \
             for (int i = 0; i <= 1; i++) { \
-                vertices[nxt][0] = (1 - 2 * i) * x * scale; \
-                vertices[nxt][1] = (1 - 2 * j) * y * scale; \
-                vertices[nxt][2] = (1 - 2 * k) * z * scale; \
-                assignColor(nxt); \
-                nxt++; \
+                vertices[vertCount][0] = (1 - 2 * i) * x * scale; \
+                vertices[vertCount][1] = (1 - 2 * j) * y * scale; \
+                vertices[vertCount][2] = (1 - 2 * k) * z * scale; \
+                vertCount++; \
  } \
  } \
  }
@@ -59,15 +58,13 @@ class RegularDodecahedron : public Polyhedron {
 #define doubling(a, b, x, y) \
     for (int i = 0; i <= 1; i++) { \
         for (int j = 0; j <= 1; j++) { \
-            vertices[nxt][a] = (1 - 2 * i) * x * scale; \
-            vertices[nxt][b] = (1 - 2 * j) * y * scale; \
-            vertices[nxt][other_axis(a, b)] = 0;        \
-            assignColor(nxt); \
-            nxt++; \
+            vertices[vertCount][a] = (1 - 2 * i) * x * scale; \
+            vertices[vertCount][b] = (1 - 2 * j) * y * scale; \
+            vertices[vertCount][other_axis(a, b)] = 0;        \
+            vertCount++; \
  } \
  }
 
-        int nxt = 0;
         float phi = (1 + sqrt(5)) / 2;
         float iphi = 1 / phi;
 

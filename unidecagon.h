@@ -6,20 +6,17 @@
 class Unidecagon : public Polyhedron {
     void initVertices() {
         const double PI = std::acos(-1);
-        int ind = 0;
 
         for (int angle = 0; angle < 360; angle += 360 / 12) {
-            vertices[ind][0] = cos(PI * angle / 180) * scale;
-            vertices[ind][2] = 0;
-            vertices[ind][1] = sin(PI * angle / 180) * scale;
-            assignColor(ind);
-            ind++;
+            vertices[vertCount][0] = cos(PI * angle / 180) * scale;
+            vertices[vertCount][2] = 0;
+            vertices[vertCount][1] = sin(PI * angle / 180) * scale;
+            vertCount++;
         }
 
-        vertices[ind][0] = vertices[ind][1] = 0;
-        vertices[ind][2] = 1 * scale;
-        assignColor(ind);
-        ind++;
+        vertices[vertCount][0] = vertices[vertCount][1] = 0;
+        vertices[vertCount][2] = 1 * scale;
+        vertCount++;
     }
 
     void initFaces() {
