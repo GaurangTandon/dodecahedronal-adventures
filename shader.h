@@ -47,8 +47,6 @@ class Shader {
     }
 
 public:
-//    const glm::mat4 DEFAULT_PROJ = glm::mat4(50.0f, , 1.0f, 100.0f);
-
     int get_id() {
         return id;
     }
@@ -58,9 +56,9 @@ public:
         glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(value));
     }
 
-    Shader(const char *vertShaderPath, const char *fragShaderPath) : model(glm::mat4(1.0f)),
-                                                                     projection(glm::mat4(1.0f)),
-                                                                     view(glm::mat4(1.0f)) {
+    Shader(const char *vertShaderPath, const char *fragShaderPath) {
+        reset();
+
         int vertShaderId = compiler(GL_VERTEX_SHADER, vertShaderPath);
         int fragShaderId = compiler(GL_FRAGMENT_SHADER, fragShaderPath);
 
@@ -103,25 +101,26 @@ public:
     }
 
     glm::vec3 getTranslation(int axis, int dir) {
-        float speed = 0.05f * getTimeDifference();
-        std::cout << speed << std::endl;
+        float speed = 0.01f;
 
-        glm::vec3 trans;
+        auto trans = glm::vec3(0.0f, 0.0f, 0.0f);
         trans[axis] = dir * speed;
 
         return trans;
+    }
+
+    void reset() {
+        model = glm::mat4(1.0f);
+        projection = glm::mat4(1.0f);
+        view = glm::mat4(1.0f);
+
+        initMatrixes();
     }
 
     void moveObject(int axis, int dir) {
         auto trans = getTranslation(axis, dir);
         model = glm::translate(model, trans);
         setMatrix("model", model);
-    }
-
-    void moveCamera(int axis, int dir) {
-        auto trans = getTranslation(axis, dir);
-        view = glm::translate(view, trans);
-        setMatrix("view", view);
     }
 
     void rotObject(int axis_ind) {

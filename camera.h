@@ -1,7 +1,7 @@
 #ifndef A0_CAMERA_H
 #define A0_CAMERA_H
 
-// TODO: demoss, copied from learnopengl.com
+// demoss
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
@@ -21,44 +21,38 @@ const auto UP = glm::vec3(0.0f, 1.0f, 0.0f);
 const auto FRONT = glm::vec3(0.0f, 0.0f, -1.0f);
 
 class Camera {
+private:
+    void updateCameraEulerAngles() {
+        glm::vec3 front;
+        front.x = cosf(glm::radians(YAW)) * cosf(glm::radians(PITCH));
+        front.y = sinf(glm::radians(PITCH));
+        front.z = sinf(glm::radians(YAW)) * cosf(glm::radians(PITCH));
+
+        // normalization
+        Front = glm::normalize(front);
+        Right = glm::normalize(glm::cross(Front, WorldUp));
+        Up = glm::normalize(glm::cross(Right, Front));
+    }
+
 public:
-    // camera Attributes
     glm::vec3 Position;
     glm::vec3 Front;
     glm::vec3 Up;
     glm::vec3 Right;
     glm::vec3 WorldUp;
-    // euler Angles
-    float Yaw;
-    float Pitch;
-    // camera options
-    float MovementSpeed;
-    float MouseSensitivity;
-    float Zoom;
 
-    Camera(glm::vec3 position = POSITION, glm::vec3 up = UP, float yaw = YAW, float pitch = PITCH) : Front(FRONT),
-                                                                                                     MovementSpeed(
-                                                                                                             SPEED),
-                                                                                                     MouseSensitivity(
-                                                                                                             SENSITIVITY),
-                                                                                                     Zoom(ZOOM) {
-        Position = position;
-        WorldUp = up;
-        Yaw = yaw;
-        Pitch = pitch;
-        updateCameraVectors();
+    Camera(glm::vec3 position = POSITION, glm::vec3 up = UP) : Front(FRONT), Position(position), WorldUp(up) {
+        updateCameraEulerAngles();
     }
 
-    // returns the view matrix calculated using Euler Angles and the LookAt Matrix
     glm::mat4 GetViewMatrix() {
         return glm::lookAt(Position, Position + Front, Up);
     }
 
     // processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
     void ProcessKeyboard(int direction, float deltaTime) {
-        float velocity = MovementSpeed * deltaTime;
+        float velocity = SPEED * deltaTime;
         glm::vec3 delta;
-        std::cout << velocity << std::endl;
 
         if (direction == 0)
             delta = -Front * velocity;
@@ -77,20 +71,14 @@ public:
         Position += delta;
     }
 
-private:
-    // calculates the front vector from the Camera's (updated) Euler Angles
-    void updateCameraVectors() {
-        // calculate the new Front vector
-        glm::vec3 front;
-        front.x = cosf(glm::radians(Yaw)) * cosf(glm::radians(Pitch));
-        front.y = sinf(glm::radians(Pitch));
-        front.z = sinf(glm::radians(Yaw)) * cosf(glm::radians(Pitch));
-        Front = glm::normalize(front);
-        // also re-calculate the Right and Up vector
-        Right = glm::normalize(glm::cross(Front,
-                                          WorldUp));  // normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
-        Up = glm::normalize(glm::cross(Right, Front));
+    void reset() {
+        Front = FRONT;
+        Position = POSITION;
+        WorldUp = UP;
+
+        updateCameraEulerAngles();
     }
+
 };
 
 #endif //A0_CAMERA_H

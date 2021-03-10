@@ -66,9 +66,11 @@ void processInput(GLFWwindow *window, Shader &shader, Camera &camera) {
         return;
     }
 
-    // reset all rotations :P
+    // reset everything
     if (glfwGetKey(window, GLFW_KEY_V) == GLFW_PRESS) {
         ROTATING_X = ROTATING_Y = ROTATING_Z = false;
+        shader.reset();
+//        camera.reset();
         return;
     }
 
@@ -139,7 +141,7 @@ void renderLoop(GLFWwindow *window) {
     shader.use();
     shader.initMatrixes();
 
-    float scale = 0.25f;
+    float scale = 0.5f;
     RegularDodecahedron reg = RegularDodecahedron(scale);
     HexagonalBipyramid hex = HexagonalBipyramid(scale);
     Unidecagon unid = Unidecagon(scale);
