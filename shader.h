@@ -47,6 +47,8 @@ class Shader {
     }
 
 public:
+//    const glm::mat4 DEFAULT_PROJ = glm::mat4(50.0f, , 1.0f, 100.0f);
+
     int get_id() {
         return id;
     }
@@ -96,10 +98,12 @@ public:
         setMatrix("projection", projection);
     }
 
-    [[nodiscard]] glm::vec3 getTranslation(int axis, int dir) const {
-        float speed = 0.001f * (currentFrameTime - previousFrameTime);
-        std::cout << speed << std::endl;
-        speed = std::fmin(speed, 0.0001f);
+    float getTimeDifference() {
+        return currentFrameTime - previousFrameTime;
+    }
+
+    glm::vec3 getTranslation(int axis, int dir) {
+        float speed = 0.05f * getTimeDifference();
         std::cout << speed << std::endl;
 
         glm::vec3 trans;

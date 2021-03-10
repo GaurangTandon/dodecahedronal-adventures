@@ -8,12 +8,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <vector>
-enum Camera_Movement {
-    FORWARD,
-    BACKWARD,
-    LEFT,
-    RIGHT
-};
 
 // Default camera values
 const float YAW = -90.0f;
@@ -61,16 +55,26 @@ public:
     }
 
     // processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
-    void ProcessKeyboard(Camera_Movement direction, float deltaTime) {
+    void ProcessKeyboard(int direction, float deltaTime) {
         float velocity = MovementSpeed * deltaTime;
-        if (direction == FORWARD)
-            Position += Front * velocity;
-        if (direction == BACKWARD)
-            Position -= Front * velocity;
-        if (direction == LEFT)
-            Position -= Right * velocity;
-        if (direction == RIGHT)
-            Position += Right * velocity;
+        glm::vec3 delta;
+        std::cout << velocity << std::endl;
+
+        if (direction == 0)
+            delta = -Front * velocity;
+        else if (direction == 1)
+            delta = Front * velocity;
+        else if (direction == 2)
+            delta = -Right * velocity;
+        else if (direction == 3)
+            delta = Right * velocity;
+        else if (direction == 4)
+            delta = -Up * velocity;
+        else if (direction == 5)
+            delta = Up * velocity;
+        else assert(false);
+
+        Position += delta;
     }
 
 private:

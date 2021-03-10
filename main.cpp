@@ -25,10 +25,10 @@ void frameSizeCallback(GLFWwindow *_window, int width, int height) {
     glViewport(0, 0, width, height);
 }
 
-void processInput(GLFWwindow *window, Shader &shader) {
+void processInput(GLFWwindow *window, Shader &shader, Camera &camera) {
 #define pressed(x) (glfwGetKey(window, x) == GLFW_PRESS)
 
-    std::vector<std::tuple<int, int, int>> objectMappings = {
+    std::vector <std::tuple<int, int, int>> objectMappings = {
             {GLFW_KEY_Q, 0, 1},
             {GLFW_KEY_A, 0, -1},
             {GLFW_KEY_W, 1, 1},
@@ -37,13 +37,13 @@ void processInput(GLFWwindow *window, Shader &shader) {
             {GLFW_KEY_D, 2, -1}
     };
 
-    std::vector<std::tuple<int, int, int>> cameraMappings = {
-            {GLFW_KEY_R, 0, 1},
-            {GLFW_KEY_F, 0, -1},
-            {GLFW_KEY_T, 1, 1},
-            {GLFW_KEY_G, 1, -1},
-            {GLFW_KEY_Y, 2, 1},
-            {GLFW_KEY_H, 2, -1}
+    std::vector <std::tuple<int, int>> cameraMappings = {
+            {GLFW_KEY_R, 0},
+            {GLFW_KEY_F, 1},
+            {GLFW_KEY_T, 2},
+            {GLFW_KEY_G, 3},
+            {GLFW_KEY_Y, 4},
+            {GLFW_KEY_H, 5}
     };
 
     if (pressed(GLFW_KEY_ESCAPE)) {
@@ -96,9 +96,9 @@ void processInput(GLFWwindow *window, Shader &shader) {
         }
     }
 
-    for (auto &[key, axis, dir] : cameraMappings) {
+    for (auto &[key, dir] : cameraMappings) {
         if (glfwGetKey(window, key) == GLFW_PRESS) {
-            shader.moveCamera(axis, dir);
+            camera.ProcessKeyboard(dir, shader.getTimeDifference());
             return;
         }
     }
@@ -110,8 +110,7 @@ void updateFrame(GLFWwindow *_window) {
 }
 
 void calcProjections(Camera &camera, Shader &shader) {
-    // pass projection matrix to shader (note that in this case it could change every frame)
-    auto projection = glm::perspective(glm::radians(camera.Zoom), (float) SCREEN_WIDTH / (float) SCREEN_HEIGHT, 0.1f,
+    auto projection = glm::perspective(50.0f, (float) SCREEN_WIDTH / (float) SCREEN_HEIGHT, 1.0f,
                                        100.0f);
     shader.setMatrix("projection", projection);
 
@@ -140,15 +139,16 @@ void renderLoop(GLFWwindow *window) {
     shader.use();
     shader.initMatrixes();
 
-    float scale = 0.5f;
+    float scale = 0.25f;
     RegularDodecahedron reg = RegularDodecahedron(scale);
     HexagonalBipyramid hex = HexagonalBipyramid(scale);
     Unidecagon unid = Unidecagon(scale);
     Cube cube = Cube(scale);
 
-    Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+    Camera camera(glm::vec3(0.0f, 0.0f, 10.0f));
 
-    long long int previousFrames = 0; double prevTime = glfwGetTime();
+    long long int previousFrames = 0;
+    double prevTime = glfwGetTime();
     long long int frames = 0;
 
     while (not glfwWindowShouldClose(window)) {
@@ -157,13 +157,13 @@ void renderLoop(GLFWwindow *window) {
         auto currentTime = glfwGetTime();
         if (currentTime > prevTime + 1) {
             auto rate = frames - previousFrames;
-            std::cout << "Frames:" << rate << std::endl;
+            std::cout << "Frames (per second):" << rate << std::endl;
 
             previousFrames = frames;
             prevTime = currentTime;
         }
 
-        processInput(window, shader);
+        processInput(window, shader, camera);
 
         updateFrame(window);
 
