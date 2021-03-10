@@ -148,7 +148,21 @@ void renderLoop(GLFWwindow *window) {
 
     Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
+    long long int previousFrames = 0; double prevTime = glfwGetTime();
+    long long int frames = 0;
+
     while (not glfwWindowShouldClose(window)) {
+        frames++;
+
+        auto currentTime = glfwGetTime();
+        if (currentTime > prevTime + 1) {
+            auto rate = frames - previousFrames;
+            std::cout << "Frames:" << rate << std::endl;
+
+            previousFrames = frames;
+            prevTime = currentTime;
+        }
+
         processInput(window, shader);
 
         updateFrame(window);

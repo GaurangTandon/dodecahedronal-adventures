@@ -3,12 +3,14 @@
 
 #include<glad/glad.h>
 
+#include <cmath>
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <cmath>
 #include <fstream>
-#include <sstream>
 #include <iostream>
+#include <sstream>
 
 class Shader {
     int id;
@@ -94,8 +96,11 @@ public:
         setMatrix("projection", projection);
     }
 
-    glm::vec3 getTranslation(int axis, int dir) {
-        float speed = 0.5f * (currentFrameTime - previousFrameTime);
+    [[nodiscard]] glm::vec3 getTranslation(int axis, int dir) const {
+        float speed = 0.001f * (currentFrameTime - previousFrameTime);
+        std::cout << speed << std::endl;
+        speed = std::fmin(speed, 0.0001f);
+        std::cout << speed << std::endl;
 
         glm::vec3 trans;
         trans[axis] = dir * speed;

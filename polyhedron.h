@@ -101,7 +101,6 @@ protected:
                 if (used[i]) target = dupe(i);
                 else used[target] = true;
 
-                std::cout << target << " " << faceInd << std::endl;
                 assignColor(target, faceInd);
                 indices[ind++] = target;
             }
