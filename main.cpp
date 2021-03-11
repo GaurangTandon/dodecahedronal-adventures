@@ -27,14 +27,19 @@ void frameSizeCallback(GLFWwindow *_window, int width, int height) {
     glViewport(0, 0, width, height);
 }
 
-void resetStuff(Shader &shader, Camera &camera, bool shaderReset = true) {
-    if (shaderReset) {
-        shader.reset();
-        ROTATING_X = ROTATING_Y = ROTATING_Z = false;
-    }
+void resetShader(Shader &shader) {
+    shader.reset();
+    ROTATING_X = ROTATING_Y = ROTATING_Z = false;
+}
 
+void resetCamera(Camera &camera) {
     ROTATE_CAM = false;
     camera.reset();
+}
+
+void resetAll(Shader &shader, Camera &camera) {
+    resetShader(shader);
+    resetCamera(camera);
 }
 
 void processInput(GLFWwindow *window, Shader &shader, Camera &camera) {
@@ -80,14 +85,32 @@ void processInput(GLFWwindow *window, Shader &shader, Camera &camera) {
 
     // reset everything
     if (pressed(GLFW_KEY_V)) {
-        resetStuff(shader, camera);
+        resetAll(shader, camera);
         return;
     }
 
     if (pressed(GLFW_KEY_O)) {
-        resetStuff(shader, camera, false);
+        resetCamera(camera);
         ROTATE_CAM = true;
 
+        return;
+    }
+
+    if (pressed(GLFW_KEY_4)) {
+        resetCamera(camera);
+        camera.predefinedJump(0);
+        return;
+    }
+
+    if (pressed(GLFW_KEY_5)) {
+        resetCamera(camera);
+        camera.predefinedJump(1);
+        return;
+    }
+
+    if (pressed(GLFW_KEY_6)) {
+        resetCamera(camera);
+        camera.predefinedJump(2);
         return;
     }
 

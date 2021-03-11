@@ -88,6 +88,27 @@ public:
 
         updateCameraUpRightVectors();
     }
+
+    void predefinedJump(int position) {
+        auto magnitude = glm::length(Position);
+
+        switch (position) {
+            case 0:
+                Front = FRONT;
+                break;
+            case 1:
+                Front = -FRONT;
+                break;
+            case 2:
+                auto s2 = sqrtf(2.0f);
+                auto nis2 = -1 / s2;
+                Front = glm::vec3(nis2, 0, nis2);
+                break;
+        }
+
+        Position = -magnitude * Front;
+        updateCameraUpRightVectors();
+    }
 };
 
 #endif //A0_CAMERA_H
