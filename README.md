@@ -1,0 +1,31 @@
+# Graphics Assignment Zero
+
+TODO
+- fix cone black base
+- add texture
+- add meme (drake?)
+
+## Modelling
+
+All vertex coordinates and corresponding face indices are calculated inside of code. Look into `initVertices` and `initFaces` for the calculations.
+
+1. Regular Dodecahedron: `regular_dodec.h`
+2. Hexagonal Bipyramid: `hexa_bipyramid.h`
+3. Undecagonal pyramid: `unidecagon.h`
+4. Cube: `cube.h` (extra model)
+
+All classes are very modular, and extend from the base class `Polyhedron.h`, which handles vertex duplication, coloring, drawing, etc.
+
+**Keystrokes:** Press 0 for regular dodec, 1 for hexagonal bipy, 2 for undecagon py, and 3 for cube.
+
+## Animation
+
+1. For translation of camaera, use: R for +X, F for -X, T for +Y, G for -Y, Y for +Z, H for -Z, where X,Y,Z are the respective axis.
+2. For translation of object, use: Q for +X, A for -X, W for +Y, S for -Y, E for +Z, D for -Z, where X,Y,Z are the respective axis.
+3. Key to look from positive Z axis: 4, from negative Z axis: 5, from 45deg of XZ plane: 6.
+4. Key to rotate object about Z axis: Z, about X axis: X, and about Y axis: C.
+5. Press O (alphabet O) to rotate camera about the object.
+
+Additional:
+
+1. Key to reset object position and camera position: V.
