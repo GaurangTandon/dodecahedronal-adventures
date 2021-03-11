@@ -27,10 +27,13 @@ void frameSizeCallback(GLFWwindow *_window, int width, int height) {
     glViewport(0, 0, width, height);
 }
 
-void resetStuff(Shader &shader, Camera &camera) {
-    ROTATE_CAM = ROTATING_X = ROTATING_Y = ROTATING_Z = false;
+void resetStuff(Shader &shader, Camera &camera, bool shaderReset = true) {
+    if (shaderReset) {
+        shader.reset();
+        ROTATING_X = ROTATING_Y = ROTATING_Z = false;
+    }
 
-    shader.reset();
+    ROTATE_CAM = false;
     camera.reset();
 }
 
@@ -82,7 +85,7 @@ void processInput(GLFWwindow *window, Shader &shader, Camera &camera) {
     }
 
     if (pressed(GLFW_KEY_O)) {
-        resetStuff(shader, camera);
+        resetStuff(shader, camera, false);
         ROTATE_CAM = true;
 
         return;

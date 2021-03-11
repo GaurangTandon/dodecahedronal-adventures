@@ -18,7 +18,7 @@ glm::vec3 WORLD_UP;
 
 class Camera {
 private:
-    void updateCameraEulerAngles() {
+    void updateCameraUpRightVectors() {
         // right and up are derived from Front and an absolute WORLD_UP
         Right = glm::normalize(glm::cross(Front, WORLD_UP));
         Up = glm::normalize(glm::cross(Right, Front));
@@ -36,7 +36,7 @@ public:
                                             Front(FRONT), Up(UP),
                                             initialPosition(position) {
         WORLD_UP = Up;
-        updateCameraEulerAngles();
+        updateCameraUpRightVectors();
     }
 
     glm::mat4 GetViewMatrix() {
@@ -67,23 +67,26 @@ public:
     }
 
     void rotate() {
-        auto originalPosition = Position;
+        auto theta = glm::radians(5.0f);
 
-        Position = glm::vec3(0, 0, 0);
-        updateCameraEulerAngles();
+        auto magnitude = glm::length(Position);
 
-//        Front = glm::rotate(Front, glm::radians(100), WORLD_UP);
-        updateCameraEulerAngles();
+        // rotate front vector in xz plane
+        auto x = Front.x, z = Front.z;
+        Front.x = cos(theta) * x - sin(theta) * z;
+        Front.z = sin(theta) * x + cos(theta) * z;
 
-        Position = originalPosition;
-        updateCameraEulerAngles();
+        // Update position vector in line with the new front vector
+        Position = -magnitude * Front;
+
+        updateCameraUpRightVectors();
     }
 
     void reset() {
         Front = FRONT;
         Position = initialPosition;
 
-        updateCameraEulerAngles();
+        updateCameraUpRightVectors();
     }
 };
 
