@@ -21,14 +21,23 @@ bool ROTATING_Y = false;
 bool ROTATING_Z = false;
 int CURR_OBJECT = 0;
 
+bool ROTATE_CAM = false;
+
 void frameSizeCallback(GLFWwindow *_window, int width, int height) {
     glViewport(0, 0, width, height);
+}
+
+void resetStuff(Shader &shader, Camera &camera) {
+    ROTATE_CAM = ROTATING_X = ROTATING_Y = ROTATING_Z = false;
+
+    shader.reset();
+    camera.reset();
 }
 
 void processInput(GLFWwindow *window, Shader &shader, Camera &camera) {
 #define pressed(x) (glfwGetKey(window, x) == GLFW_PRESS)
 
-    std::vector <std::tuple<int, int, int>> objectMappings = {
+    std::vector<std::tuple<int, int, int>> objectMappings = {
             {GLFW_KEY_Q, 0, 1},
             {GLFW_KEY_A, 0, -1},
             {GLFW_KEY_W, 1, 1},
@@ -37,7 +46,7 @@ void processInput(GLFWwindow *window, Shader &shader, Camera &camera) {
             {GLFW_KEY_D, 2, -1}
     };
 
-    std::vector <std::tuple<int, int>> cameraMappings = {
+    std::vector<std::tuple<int, int>> cameraMappings = {
             {GLFW_KEY_R, 0},
             {GLFW_KEY_F, 1},
             {GLFW_KEY_T, 2},
@@ -51,26 +60,31 @@ void processInput(GLFWwindow *window, Shader &shader, Camera &camera) {
         return;
     }
 
-    if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS) {
+    if (pressed(GLFW_KEY_Z)) {
         ROTATING_Z = not ROTATING_Z;
         return;
     }
 
-    if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS) {
+    if (pressed(GLFW_KEY_X)) {
         ROTATING_X = not ROTATING_X;
         return;
     }
 
-    if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS) {
+    if (pressed(GLFW_KEY_C)) {
         ROTATING_Y = not ROTATING_Y;
         return;
     }
 
     // reset everything
-    if (glfwGetKey(window, GLFW_KEY_V) == GLFW_PRESS) {
-        ROTATING_X = ROTATING_Y = ROTATING_Z = false;
-        shader.reset();
-//        camera.reset();
+    if (pressed(GLFW_KEY_V)) {
+        resetStuff(shader, camera);
+        return;
+    }
+
+    if (pressed(GLFW_KEY_O)) {
+        resetStuff(shader, camera);
+        ROTATE_CAM = true;
+
         return;
     }
 
@@ -100,7 +114,7 @@ void processInput(GLFWwindow *window, Shader &shader, Camera &camera) {
 
     for (auto &[key, dir] : cameraMappings) {
         if (glfwGetKey(window, key) == GLFW_PRESS) {
-            camera.ProcessKeyboard(dir, shader.getTimeDifference());
+            camera.translate(dir, shader.getTimeDifference());
             return;
         }
     }
@@ -123,12 +137,19 @@ void calcProjections(Camera &camera, Shader &shader) {
 
 void drawObjects(Camera &camera, Shader &shader, Polyhedron &obj) {
     shader.use();
+
     if (ROTATING_X)
         shader.rotObject(0);
+
     if (ROTATING_Y)
         shader.rotObject(1);
+
     if (ROTATING_Z)
         shader.rotObject(2);
+
+    if (ROTATE_CAM)
+        camera.rotate();
+
     calcProjections(camera, shader);
     obj.draw();
 }
