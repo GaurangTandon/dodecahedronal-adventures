@@ -2,12 +2,17 @@
 #define A0_UNIDECAGON_H
 
 #include "polyhedron.h"
+#include <numeric>
 
 class Unidecagon : public Polyhedron {
+    unsigned int vertsAtBase = 11;
+
     void initVertices() {
         const double PI = std::acos(-1);
+        float angle = 0;
+        float increment = 360.0f / float(vertsAtBase);
 
-        for (int angle = 0; angle < 360; angle += 360 / 12) {
+        for (unsigned int iter = 0; iter < vertsAtBase; iter++, angle += increment) {
             vertices[totalVerts][0] = cosf(PI * angle / 180) * scale;
             vertices[totalVerts][2] = 0;
             vertices[totalVerts][1] = sinf(PI * angle / 180) * scale;
@@ -20,11 +25,11 @@ class Unidecagon : public Polyhedron {
     }
 
     void initFaces() {
-        for (unsigned int i = 0; i < 12; i++)
-            faces.push_back({i, (i + 1) % 12, 12});
+        for (unsigned int i = 0; i < vertsAtBase; i++)
+            faces.push_back({i, (i + 1) % vertsAtBase, vertsAtBase});
 
-        std::vector<unsigned int> bigface;
-        for (unsigned int i = 0; i < 12; i++) bigface.push_back(i);
+        std::vector<unsigned int> bigface(vertsAtBase);
+        std::iota(bigface.begin(), bigface.end(), 0);
         faces.push_back(bigface);
     }
 

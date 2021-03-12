@@ -114,21 +114,18 @@ void processInput(GLFWwindow *window, Shader &shader, Camera &camera) {
         return;
     }
 
-    if (pressed(GLFW_KEY_1)) {
-        CURR_OBJECT = 1;
-        return;
-    }
-    if (pressed(GLFW_KEY_2)) {
-        CURR_OBJECT = 2;
-        return;
-    }
-    if (pressed(GLFW_KEY_3)) {
-        CURR_OBJECT = 3;
-        return;
-    }
-    if (pressed(GLFW_KEY_0)) {
-        CURR_OBJECT = 0;
-        return;
+    std::vector<std::tuple<int, int>> objectSelectorMappings = {
+            {GLFW_KEY_0, 0},
+            {GLFW_KEY_1, 1},
+            {GLFW_KEY_2, 2},
+            {GLFW_KEY_3, 3}
+    };
+
+    for (auto &[key, selector] : objectSelectorMappings) {
+        if (pressed(key)) {
+            CURR_OBJECT = selector;
+            return;
+        }
     }
 
     for (auto &[key, axis, dir] : objectMappings) {
