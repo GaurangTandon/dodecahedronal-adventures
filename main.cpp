@@ -4,7 +4,6 @@
 #include "shader.h"
 #include <tuple>
 #include <iostream>
-#include <cassert>
 #include <vector>
 
 #include "regular_dodec.h"
@@ -12,6 +11,7 @@
 #include "unidecagon.h"
 #include "cube.h"
 #include "camera.h"
+#include "meme.h"
 
 const unsigned int SCREEN_WIDTH = 1280;
 const unsigned int SCREEN_HEIGHT = 720;
@@ -20,6 +20,7 @@ bool ROTATING_X = false;
 bool ROTATING_Y = false;
 bool ROTATING_Z = false;
 int CURR_OBJECT = 0;
+bool MEME_ON = false;
 
 bool ROTATE_CAM = false;
 
@@ -40,6 +41,12 @@ void resetCamera(Camera &camera) {
 void resetAll(Shader &shader, Camera &camera) {
     resetShader(shader);
     resetCamera(camera);
+    MEME_ON = false;
+    CURR_OBJECT = 0;
+}
+
+void initMeme() {
+    MEME_ON = true;
 }
 
 void processInput(GLFWwindow *window, Shader &shader, Camera &camera) {
@@ -141,6 +148,12 @@ void processInput(GLFWwindow *window, Shader &shader, Camera &camera) {
             return;
         }
     }
+
+    if (pressed(GLFW_KEY_P)) {
+        resetAll(shader, camera);
+        initMeme();
+        return;
+    }
 }
 
 void updateFrame(GLFWwindow *_window) {
@@ -158,7 +171,7 @@ void calcProjections(Camera &camera, Shader &shader) {
     shader.setMatrix("view", view);
 }
 
-void drawObjects(Camera &camera, Shader &shader, Polyhedron &obj) {
+void initCameraShader(Camera &camera, Shader &shader) {
     shader.use();
 
     if (ROTATING_X)
@@ -174,7 +187,6 @@ void drawObjects(Camera &camera, Shader &shader, Polyhedron &obj) {
         camera.rotate();
 
     calcProjections(camera, shader);
-    obj.draw();
 }
 
 void renderLoop(GLFWwindow *window) {
@@ -190,6 +202,7 @@ void renderLoop(GLFWwindow *window) {
     HexagonalBipyramid hex = HexagonalBipyramid(scale);
     Unidecagon unid = Unidecagon(scale);
     Cube cube = Cube(scale);
+    Meme meme = Meme(scale);
 
     Camera camera(glm::vec3(0.0f, 0.0f, 10.0f));
 
@@ -213,14 +226,21 @@ void renderLoop(GLFWwindow *window) {
 
         updateFrame(window);
 
-        if (CURR_OBJECT == 0)
-            drawObjects(camera, shader, reg);
+        if (MEME_ON)
+            meme.useTexture();
+
+        initCameraShader(camera, shader);
+
+        if (MEME_ON)
+            meme.draw();
+        else if (CURR_OBJECT == 0)
+            reg.draw();
         else if (CURR_OBJECT == 1)
-            drawObjects(camera, shader, hex);
+            hex.draw();
         else if (CURR_OBJECT == 2)
-            drawObjects(camera, shader, unid);
+            unid.draw();
         else
-            drawObjects(camera, shader, cube);
+            cube.draw();
 
         // swap the currently computed render buffers with whatever is in the
         // window currently
