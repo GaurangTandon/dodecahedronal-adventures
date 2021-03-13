@@ -38,8 +38,15 @@ void resetCamera(Camera &camera) {
     camera.reset();
 }
 
-void resetAll(std::vector<Shader> &shaders, Camera &camera) {
-    for (auto &shader: shaders) resetShader(shader);
+struct myShaders {
+    Shader meme, obj;
+    myShaders(Shader &o, Shader &m): obj(o), meme(m) {
+    }
+};
+
+void resetAll(myShaders &shaders, Camera &camera) {
+    resetShader(shaders.meme);
+    resetShader(shaders.obj);
 
     resetCamera(camera);
     MEME_ON = false;
@@ -50,7 +57,7 @@ void initMeme() {
     MEME_ON = true;
 }
 
-void processInput(GLFWwindow *window, std::vector<Shader> &shaders, Camera &camera) {
+void processInput(GLFWwindow *window, myShaders &shaders, Camera &camera) {
 #define pressed(x) (glfwGetKey(window, x) == GLFW_PRESS)
 
     std::vector<std::tuple<int, int, int>> objectMappings = {
@@ -139,10 +146,10 @@ void processInput(GLFWwindow *window, std::vector<Shader> &shaders, Camera &came
     for (auto &[key, axis, dir] : objectMappings) {
         if (glfwGetKey(window, key) == GLFW_PRESS) {
             if (MEME_ON) {
-                shaders[0].moveObject(axis, dir);
-                shaders[1].moveObject(axis, dir);
+                shaders.obj.moveObject(axis, dir);
+                shaders.meme.moveObject(axis, dir);
             } else {
-                shaders[0].moveObject(axis, dir);
+                shaders.obj.moveObject(axis, dir);
             }
             return;
         }
@@ -150,7 +157,7 @@ void processInput(GLFWwindow *window, std::vector<Shader> &shaders, Camera &came
 
     for (auto &[key, dir] : cameraMappings) {
         if (glfwGetKey(window, key) == GLFW_PRESS) {
-            camera.translate(dir, shaders[0].getTimeDifference());
+            camera.translate(dir, shaders.obj.getTimeDifference());
             return;
         }
     }
@@ -202,15 +209,14 @@ void renderLoop(GLFWwindow *window) {
     // toggle for wireframe
 //    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-    auto shader = Shader("shader.vs", "shader.fs");
-    shader.use();
-    shader.initMatrixes();
 
+    auto objShader = Shader("shader.vs", "shader.fs");
     auto memeShader = Shader("meme_shader.vs", "meme_shader.fs");
-    memeShader.use();
-    memeShader.initMatrixes();
-
-    std::vector<Shader> shaders = {shader, memeShader};
+    myShaders mss(objShader, memeShader);
+    mss.obj.use();
+    mss.obj.initMatrixes();
+    mss.meme.use();
+    mss.meme.initMatrixes();
 
     float scale = 0.5f;
     RegularDodecahedron reg = RegularDodecahedron(scale);
@@ -237,7 +243,7 @@ void renderLoop(GLFWwindow *window) {
             prevTime = currentTime;
         }
 
-        processInput(window, shaders, camera);
+        processInput(window, mss, camera);
 
         updateFrame(window);
 
@@ -245,18 +251,18 @@ void renderLoop(GLFWwindow *window) {
             meme.useTexture();
 
         if (MEME_ON) {
-            initCamera(camera, shaders[1]);
-            initShader(shaders[1], false);
+            initShader(mss.meme, false);
+            initCamera(camera, mss.meme);
 
             meme.draw();
 
-            initCamera(camera, shaders[0]);
-            initShader(shaders[0]);
+            initShader(mss.obj);
+            initCamera(camera, mss.obj);
 
             meme.drawPolyhedron();
         } else {
-            initCamera(camera, shaders[0]);
-            initShader(shaders[0]);
+            initShader(mss.obj);
+            initCamera(camera, mss.obj);
 
             if (CURR_OBJECT == 0)
                 reg.draw();
