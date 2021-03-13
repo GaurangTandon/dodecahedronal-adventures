@@ -38,8 +38,9 @@ void resetCamera(Camera &camera) {
     camera.reset();
 }
 
-void resetAll(Shader &shader, Camera &camera) {
-    resetShader(shader);
+void resetAll(std::vector<Shader> &shaders, Camera &camera) {
+    for (auto &shader: shaders) resetShader(shader);
+
     resetCamera(camera);
     MEME_ON = false;
     CURR_OBJECT = 0;
@@ -49,7 +50,7 @@ void initMeme() {
     MEME_ON = true;
 }
 
-void processInput(GLFWwindow *window, Shader &shader, Camera &camera) {
+void processInput(GLFWwindow *window, std::vector<Shader> &shaders, Camera &camera) {
 #define pressed(x) (glfwGetKey(window, x) == GLFW_PRESS)
 
     std::vector<std::tuple<int, int, int>> objectMappings = {
@@ -92,7 +93,7 @@ void processInput(GLFWwindow *window, Shader &shader, Camera &camera) {
 
     // reset everything
     if (pressed(GLFW_KEY_V)) {
-        resetAll(shader, camera);
+        resetAll(shaders, camera);
         return;
     }
 
@@ -137,20 +138,25 @@ void processInput(GLFWwindow *window, Shader &shader, Camera &camera) {
 
     for (auto &[key, axis, dir] : objectMappings) {
         if (glfwGetKey(window, key) == GLFW_PRESS) {
-            shader.moveObject(axis, dir);
+            if (MEME_ON) {
+                shaders[0].moveObject(axis, dir);
+                shaders[1].moveObject(axis, dir);
+            } else {
+                shaders[0].moveObject(axis, dir);
+            }
             return;
         }
     }
 
     for (auto &[key, dir] : cameraMappings) {
         if (glfwGetKey(window, key) == GLFW_PRESS) {
-            camera.translate(dir, shader.getTimeDifference());
+            camera.translate(dir, shaders[0].getTimeDifference());
             return;
         }
     }
 
     if (pressed(GLFW_KEY_P)) {
-        resetAll(shader, camera);
+        resetAll(shaders, camera);
         initMeme();
         return;
     }
@@ -171,22 +177,25 @@ void calcProjections(Camera &camera, Shader &shader) {
     shader.setMatrix("view", view);
 }
 
-void initCameraShader(Camera &camera, Shader &shader) {
-    shader.use();
-
-    if (ROTATING_X)
-        shader.rotObject(0);
-
-    if (ROTATING_Y)
-        shader.rotObject(1);
-
-    if (ROTATING_Z)
-        shader.rotObject(2);
-
-    if (ROTATE_CAM)
-        camera.rotate();
+void initCamera(Camera &camera, Shader &shader) {
+    if (ROTATE_CAM) camera.rotate();
 
     calcProjections(camera, shader);
+}
+
+void initShader(Shader &shader, bool rot = true) {
+    shader.use();
+
+    if (rot) {
+        if (ROTATING_X)
+            shader.rotObject(0);
+
+        if (ROTATING_Y)
+            shader.rotObject(1);
+
+        if (ROTATING_Z)
+            shader.rotObject(2);
+    }
 }
 
 void renderLoop(GLFWwindow *window) {
@@ -196,6 +205,12 @@ void renderLoop(GLFWwindow *window) {
     auto shader = Shader("shader.vs", "shader.fs");
     shader.use();
     shader.initMatrixes();
+
+    auto memeShader = Shader("meme_shader.vs", "meme_shader.fs");
+    memeShader.use();
+    memeShader.initMatrixes();
+
+    std::vector<Shader> shaders = {shader, memeShader};
 
     float scale = 0.5f;
     RegularDodecahedron reg = RegularDodecahedron(scale);
@@ -222,25 +237,36 @@ void renderLoop(GLFWwindow *window) {
             prevTime = currentTime;
         }
 
-        processInput(window, shader, camera);
+        processInput(window, shaders, camera);
 
         updateFrame(window);
 
         if (MEME_ON)
             meme.useTexture();
 
-        initCameraShader(camera, shader);
+        if (MEME_ON) {
+            initCamera(camera, shaders[1]);
+            initShader(shaders[1], false);
 
-        if (MEME_ON)
             meme.draw();
-        else if (CURR_OBJECT == 0)
-            reg.draw();
-        else if (CURR_OBJECT == 1)
-            hex.draw();
-        else if (CURR_OBJECT == 2)
-            unid.draw();
-        else
-            cube.draw();
+
+            initCamera(camera, shaders[0]);
+            initShader(shaders[0]);
+
+            meme.drawPolyhedron();
+        } else {
+            initCamera(camera, shaders[0]);
+            initShader(shaders[0]);
+
+            if (CURR_OBJECT == 0)
+                reg.draw();
+            else if (CURR_OBJECT == 1)
+                hex.draw();
+            else if (CURR_OBJECT == 2)
+                unid.draw();
+            else
+                cube.draw();
+        }
 
         // swap the currently computed render buffers with whatever is in the
         // window currently
