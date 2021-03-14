@@ -6,8 +6,7 @@
 class Meme {
 private:
     float vertices[4][5];
-    const char *texturePath = "assets/datboi.jpg";
-    RegularDodecahedron dodec;
+    const char *texturePath = "assets/datboi2.jpg";
     unsigned int vao_id;
     unsigned int vbo_id;
     unsigned int texture_id;
@@ -16,15 +15,15 @@ private:
         // CW starting from top-left
         vertices[0][2] = vertices[1][2] = vertices[2][2] = vertices[3][2] = 0;
 
-        // 0, -0.75
+        // 0.75, -0.75
         // -0.75, -0.75
-        // -0.75, 0
-        // 0, 0
-        vertices[0][0] = vertices[3][0] = 0;
+        // -0.75, 0.75
+        // 0.75, 0.75
+        vertices[0][0] = vertices[3][0] = 0.75;
         vertices[1][0] = vertices[2][0] = -0.75;
 
         vertices[0][1] = vertices[1][1] = -0.75;
-        vertices[2][1] = vertices[3][1] = 0;
+        vertices[2][1] = vertices[3][1] = 0.75;
 
         // texture coordinates
         // 0, 1
@@ -45,11 +44,11 @@ private:
 
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *) 0);
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *) (3 * sizeof(float)));
+        glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *) 0);
+        glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *) (3 * sizeof(float)));
 
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
+        glEnableVertexAttribArray(2);
+        glEnableVertexAttribArray(3);
     }
 
     void initTexture() {
@@ -90,8 +89,6 @@ public:
         initVertices();
         initVertexBuffer();
         initTexture();
-
-        dodec = RegularDodecahedron(scale / 4);
     }
 
     ~Meme() {
@@ -103,10 +100,6 @@ public:
         glBindTexture(GL_TEXTURE_2D, texture_id);
         glBindVertexArray(vao_id);
         glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
-    }
-
-    void drawPolyhedron() {
-        dodec.draw();
     }
 };
 

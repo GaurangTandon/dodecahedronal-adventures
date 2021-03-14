@@ -145,6 +145,10 @@ public:
     glm::vec4 positionCentroid(const glm::vec4 &centroid) {
         return model * centroid;
     }
+
+    void setTexture(const char *textureName, int val = 0) {
+        glUniform1i(glGetUniformLocation(id, textureName), val);
+    }
 };
 
 

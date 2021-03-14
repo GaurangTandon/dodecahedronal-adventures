@@ -205,12 +205,17 @@ void renderLoop(GLFWwindow *window) {
     mss.obj.initMatrixes();
     mss.meme.use();
     mss.meme.initMatrixes();
+    mss.meme.setTexture("ourTexture");
 
     float scale = 0.5f;
+    mss.obj.use();
     RegularDodecahedron reg = RegularDodecahedron(scale);
+    RegularDodecahedron reg_meme = RegularDodecahedron(scale / 4);
     HexagonalBipyramid hex = HexagonalBipyramid(scale);
     Unidecagon unid = Unidecagon(scale);
     Cube cube = Cube(scale);
+
+    mss.meme.use();
     Meme meme = Meme(scale);
 
     Camera camera(glm::vec3(0.0f, 0.0f, 10.0f));
@@ -251,10 +256,10 @@ void renderLoop(GLFWwindow *window) {
 
             meme.draw();
 
-//            initShader(mss.obj);
-//            initCamera(camera, mss.obj);
-//
-//            meme.drawPolyhedron();
+            initShader(mss.obj);
+            initCamera(camera, mss.obj);
+
+            reg_meme.draw();
         } else {
             initShader(mss.obj);
             initCamera(camera, mss.obj);
