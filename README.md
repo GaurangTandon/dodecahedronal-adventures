@@ -31,7 +31,10 @@ Additional:
 
 1. Key to reset object position and camera position: V.
 
+### Notes
 
-## Memes and textures
+Object moves along global X, Y, Z axis which do not change even if the object is rotated.
 
-I was trying some memes and textures but couldn't it to work in time. I will try it later.
+## BONUS: Memes (story/caption) and textures
+
+Press P to get a DatBoi riding a uni-dodec :D The uni-dodec also rotates, btw, like a unicycle wheel would.
