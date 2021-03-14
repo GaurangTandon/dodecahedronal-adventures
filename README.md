@@ -1,8 +1,10 @@
 # Graphics Assignment Zero
 
-TODO
-- add texture
-- add meme (drake?)
+## Running
+
+`make && ./main`
+
+Requires glad, glfw3 and glm to be in the include path. Best way to do that is install them into your `/usr/local/include`.
 
 ## Modelling
 
