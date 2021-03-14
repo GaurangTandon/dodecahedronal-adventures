@@ -13,7 +13,10 @@
 #include <sstream>
 
 class Shader {
+private:
     int id;
+    glm::mat4 translate;
+    glm::mat4 rotate;
     glm::mat4 model;
     glm::mat4 projection;
     glm::mat4 view;
@@ -91,6 +94,7 @@ public:
     }
 
     void initMatrixes() {
+        translate = rotate = model;
         setMatrix("model", model);
         setMatrix("view", view);
         setMatrix("projection", projection);
@@ -117,10 +121,15 @@ public:
         initMatrixes();
     }
 
+    void updateModel() {
+        setMatrix("model", translate * rotate);
+    }
+
     void moveObject(int axis, int dir) {
         auto trans = getTranslation(axis, dir);
-        model = glm::translate(model, trans);
-        setMatrix("model", model);
+        translate = glm::translate(translate, trans);
+
+        updateModel();
     }
 
     void rotObject(int axis_ind) {
@@ -128,9 +137,13 @@ public:
         axis[axis_ind] = 1;
 
         auto deltaDegrees = 100 * (currentFrameTime - previousFrameTime);
-        model = glm::rotate(model, glm::radians(deltaDegrees), axis);
+        rotate = glm::rotate(rotate, glm::radians(deltaDegrees), axis);
 
-        setMatrix("model", model);
+        updateModel();
+    }
+
+    glm::vec4 positionCentroid(const glm::vec4 &centroid) {
+        return model * centroid;
     }
 };
 

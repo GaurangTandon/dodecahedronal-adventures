@@ -5,19 +5,19 @@
 #include <vector>
 
 float COLORS[20][3] = {
-        {74, 78, 77},
-        {14, 154, 167},
-        {61, 164, 171},
+        {74,  78,  77},
+        {14,  154, 167},
+        {61,  164, 171},
         {246, 205, 97},
 
         {254, 138, 113},
         {253, 244, 152},
-        {238, 64, 53},
-        {3, 146, 207},
+        {238, 64,  53},
+        {3,   146, 207},
 
         {123, 192, 67},
-        {133, 68, 66},
-        {0, 135, 68},
+        {133, 68,  66},
+        {0,   135, 68},
         {220, 237, 193}
 };
 
@@ -36,13 +36,11 @@ protected:
 
     float vertices[200][6];
     int totalVerts;
-    std::vector <std::vector<unsigned int>> faces;
+    std::vector<std::vector<unsigned int>> faces;
 
     unsigned int vao_id;
     unsigned int vbo_id;
     unsigned int ebo_id;
-
-protected:
 
     void setupVertexAttribs() {
         // create a VAO so that we can set once
@@ -110,12 +108,22 @@ protected:
     }
 
     void finishedInit() {
+        centroid = glm::vec4(0, 0, 0, 1);
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < totalVerts; j++) {
+                centroid[i] += vertices[j][i];
+            }
+            centroid[i] /= float(totalVerts);
+        }
+
         convertFacesToIndices();
         setupVertexObjects();
         setupElmBuffObjects();
     }
 
 public:
+    glm::vec4 centroid;
+
     Polyhedron(float scale_arg = 1.0f) : scale(scale_arg), totalVerts(0) {
         setupVertexAttribs();
     }

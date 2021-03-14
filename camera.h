@@ -89,24 +89,26 @@ public:
         updateCameraUpRightVectors();
     }
 
-    void predefinedJump(int position) {
+    void predefinedJump(int pred_position, const glm::vec3 &center_position) {
         auto magnitude = glm::length(Position);
+        auto s2 = sqrtf(2.0f);
+        auto nis2 = -1 / s2;
 
-        switch (position) {
+        switch (pred_position) {
             case 0:
                 Front = FRONT;
                 break;
             case 1:
                 Front = -FRONT;
                 break;
-            case 2:
-                auto s2 = sqrtf(2.0f);
-                auto nis2 = -1 / s2;
+            default:
                 Front = glm::vec3(nis2, 0, nis2);
-                break;
         }
 
-        Position = -magnitude * Front;
+//        Front -= glm::normalize(center_position);
+//        Front = glm::normalize(Front);
+        Position = center_position - magnitude * Front;
+
         updateCameraUpRightVectors();
     }
 };

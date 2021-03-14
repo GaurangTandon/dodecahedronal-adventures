@@ -40,7 +40,8 @@ void resetCamera(Camera &camera) {
 
 struct myShaders {
     Shader meme, obj;
-    myShaders(Shader &o, Shader &m): obj(o), meme(m) {
+
+    myShaders(Shader &o, Shader &m) : obj(o), meme(m) {
     }
 };
 
@@ -57,7 +58,7 @@ void initMeme() {
     MEME_ON = true;
 }
 
-void processInput(GLFWwindow *window, myShaders &shaders, Camera &camera) {
+void processInput(GLFWwindow *window, myShaders &shaders, Camera &camera, const glm::vec4 &centroid) {
 #define pressed(x) (glfwGetKey(window, x) == GLFW_PRESS)
 
     std::vector<std::tuple<int, int, int>> objectMappings = {
@@ -105,40 +106,23 @@ void processInput(GLFWwindow *window, myShaders &shaders, Camera &camera) {
     }
 
     if (pressed(GLFW_KEY_O)) {
-        resetCamera(camera);
-        ROTATE_CAM = true;
+//        resetCamera(camera);
+        ROTATE_CAM = not ROTATE_CAM;
 
         return;
     }
 
-    if (pressed(GLFW_KEY_4)) {
-        resetCamera(camera);
-        camera.predefinedJump(0);
-        return;
+    for (int i = 0; i < 3; i++) {
+        if (pressed(GLFW_KEY_4 + i)) {
+            resetCamera(camera);
+            camera.predefinedJump(i, shaders.obj.positionCentroid(centroid));
+            return;
+        }
     }
 
-    if (pressed(GLFW_KEY_5)) {
-        resetCamera(camera);
-        camera.predefinedJump(1);
-        return;
-    }
-
-    if (pressed(GLFW_KEY_6)) {
-        resetCamera(camera);
-        camera.predefinedJump(2);
-        return;
-    }
-
-    std::vector<std::tuple<int, int>> objectSelectorMappings = {
-            {GLFW_KEY_0, 0},
-            {GLFW_KEY_1, 1},
-            {GLFW_KEY_2, 2},
-            {GLFW_KEY_3, 3}
-    };
-
-    for (auto &[key, selector] : objectSelectorMappings) {
-        if (pressed(key)) {
-            CURR_OBJECT = selector;
+    for (int i = 0; i < 4; i++) {
+        if (pressed(GLFW_KEY_0 + i)) {
+            CURR_OBJECT = i;
             return;
         }
     }
@@ -243,7 +227,17 @@ void renderLoop(GLFWwindow *window) {
             prevTime = currentTime;
         }
 
-        processInput(window, mss, camera);
+        glm::vec4 centroid;
+        if (CURR_OBJECT == 0)
+            centroid = reg.centroid;
+        else if (CURR_OBJECT == 1)
+            centroid = hex.centroid;
+        else if (CURR_OBJECT == 2)
+            centroid = unid.centroid;
+        else
+            centroid = cube.centroid;
+
+        processInput(window, mss, camera, centroid);
 
         updateFrame(window);
 
