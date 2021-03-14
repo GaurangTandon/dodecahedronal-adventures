@@ -210,7 +210,7 @@ void renderLoop(GLFWwindow *window) {
     float scale = 0.5f;
     mss.obj.use();
     RegularDodecahedron reg = RegularDodecahedron(scale);
-    RegularDodecahedron reg_meme = RegularDodecahedron(scale / 4);
+    RegularDodecahedron reg_meme = RegularDodecahedron(scale / 2.75);
     HexagonalBipyramid hex = HexagonalBipyramid(scale);
     Unidecagon unid = Unidecagon(scale);
     Cube cube = Cube(scale);
@@ -259,6 +259,8 @@ void renderLoop(GLFWwindow *window) {
             initShader(mss.obj);
             initCamera(camera, mss.obj);
 
+            ROTATING_Z = true;
+//            mss.obj.moveObject(1, -1, 10.0f);
             reg_meme.draw();
         } else {
             initShader(mss.obj);
@@ -293,7 +295,7 @@ int main() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    auto window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Hello World", NULL, NULL);
+    auto window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Assignment Zero", NULL, NULL);
     if (not window) {
         std::cout << "Oops, no window for you!" << std::endl;
         glfwTerminate();

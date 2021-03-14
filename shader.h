@@ -125,8 +125,8 @@ public:
         setMatrix("model", translate * rotate);
     }
 
-    void moveObject(int axis, int dir) {
-        auto trans = getTranslation(axis, dir);
+    void moveObject(int axis, int dir, float scale = 1) {
+        auto trans = scale * getTranslation(axis, dir);
         translate = glm::translate(translate, trans);
 
         updateModel();

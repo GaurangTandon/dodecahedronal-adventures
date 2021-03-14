@@ -20,10 +20,10 @@ private:
         // -0.75, 0.75
         // 0.75, 0.75
         vertices[0][0] = vertices[3][0] = 0.75;
-        vertices[1][0] = vertices[2][0] = -0.75;
+        vertices[1][0] = vertices[2][0] = -0.50;
 
-        vertices[0][1] = vertices[1][1] = -0.75;
-        vertices[2][1] = vertices[3][1] = 0.75;
+        vertices[0][1] = vertices[1][1] = -0.95;
+        vertices[2][1] = vertices[3][1] = 0.25;
 
         // texture coordinates
         // 0, 1
