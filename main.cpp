@@ -247,19 +247,16 @@ void renderLoop(GLFWwindow *window) {
 
         updateFrame(window);
 
-        if (MEME_ON)
-            meme.useTexture();
-
         if (MEME_ON) {
             initShader(mss.meme, false);
             initCamera(camera, mss.meme);
 
             meme.draw();
 
-            initShader(mss.obj);
-            initCamera(camera, mss.obj);
-
-            meme.drawPolyhedron();
+//            initShader(mss.obj);
+//            initCamera(camera, mss.obj);
+//
+//            meme.drawPolyhedron();
         } else {
             initShader(mss.obj);
             initCamera(camera, mss.obj);

@@ -28,3 +28,8 @@ All classes are very modular, and extend from the base class `Polyhedron.h`, whi
 Additional:
 
 1. Key to reset object position and camera position: V.
+
+
+## Memes and textures
+
+I was trying some memes and textures but couldn't it to work in time. I will try it later.

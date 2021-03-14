@@ -17,11 +17,11 @@ private:
         // CW starting from top-left
         vertices[0][2] = vertices[1][2] = vertices[2][2] = vertices[3][2] = 0;
 
-        vertices[0][0] = vertices[3][0] = -0.5;
-        vertices[1][0] = vertices[2][0] = 0.5;
+        vertices[0][0] = vertices[3][0] = 0;
+        vertices[1][0] = vertices[2][0] = -0.75;
 
-        vertices[0][1] = vertices[1][1] = 0.75;
-        vertices[2][1] = vertices[3][1] = -0.75;
+        vertices[0][1] = vertices[1][1] = -0.75;
+        vertices[2][1] = vertices[3][1] = 0;
 
         // texture coordinates
         vertices[0][0] = vertices[3][0] = 0;
@@ -59,7 +59,7 @@ private:
 
         // load image, create texture and generate mipmaps
 
-        stbi_set_flip_vertically_on_load(true);
+//        stbi_set_flip_vertically_on_load(true);
 
         int width, height, nrChannels;
         unsigned char *data = stbi_load(texturePath, &width, &height, &nrChannels, 0);
@@ -84,7 +84,7 @@ public:
         initVertexBuffer();
         initTexture();
 
-        dodec = RegularDodecahedron(scale);
+        dodec = RegularDodecahedron(scale / 4);
     }
 
     ~Meme() {
@@ -92,17 +92,14 @@ public:
     }
 
     void draw() {
-        // draw quad
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture_id);
+        glBindVertexArray(vao_id);
         glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
     }
 
     void drawPolyhedron() {
         dodec.draw();
-    }
-
-    void useTexture() {
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture_id);
     }
 };
 
