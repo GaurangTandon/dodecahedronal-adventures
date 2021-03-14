@@ -91,6 +91,7 @@ public:
 
     void predefinedJump(int pred_position, const glm::vec3 &center_position) {
         auto magnitude = glm::length(Position);
+
         auto s2 = sqrtf(2.0f);
         auto nis2 = -1 / s2;
 
@@ -102,7 +103,7 @@ public:
                 Front = -FRONT;
                 break;
             default:
-                Front = glm::vec3(nis2, 0, nis2);
+                Front = glm::vec3(nis2, 0, nis2); // 1/root2, 0, 1/root2
         }
 
 //        Front -= glm::normalize(center_position);

@@ -2,7 +2,6 @@
 #define A0_MEME_H
 
 #include "regular_dodec.h"
-#include "stb_image.h"
 
 class Meme {
 private:
@@ -17,6 +16,10 @@ private:
         // CW starting from top-left
         vertices[0][2] = vertices[1][2] = vertices[2][2] = vertices[3][2] = 0;
 
+        // 0, -0.75
+        // -0.75, -0.75
+        // -0.75, 0
+        // 0, 0
         vertices[0][0] = vertices[3][0] = 0;
         vertices[1][0] = vertices[2][0] = -0.75;
 
@@ -24,11 +27,15 @@ private:
         vertices[2][1] = vertices[3][1] = 0;
 
         // texture coordinates
-        vertices[0][0] = vertices[3][0] = 0;
-        vertices[1][0] = vertices[2][0] = 1;
+        // 0, 1
+        // 1, 1
+        // 1, 0
+        // 0, 0
+        vertices[0][3] = vertices[3][3] = 0;
+        vertices[1][3] = vertices[2][3] = 1;
 
-        vertices[0][1] = vertices[1][1] = 1;
-        vertices[2][1] = vertices[3][1] = 0;
+        vertices[0][4] = vertices[1][4] = 1;
+        vertices[2][4] = vertices[3][4] = 0;
     }
 
     void initVertexBuffer() {
@@ -59,7 +66,7 @@ private:
 
         // load image, create texture and generate mipmaps
 
-//        stbi_set_flip_vertically_on_load(true);
+        stbi_set_flip_vertically_on_load(true);
 
         int width, height, nrChannels;
         unsigned char *data = stbi_load(texturePath, &width, &height, &nrChannels, 0);
