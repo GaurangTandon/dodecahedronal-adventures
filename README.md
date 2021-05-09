@@ -1,5 +1,20 @@
 # Graphics Assignment Zero
 
+## Screenshots
+
+### Shapes
+
+Regular Dodec, Hexagonal Bipyramid, Undecagon, Cube
+
+![](images/regdodec.png)
+![](images/hexbipy.png)
+![](images/undec.png)
+![](images/cube.png)
+
+Meme
+
+![](images/meme.png)
+
 ## Running
 
 `make && ./main`
