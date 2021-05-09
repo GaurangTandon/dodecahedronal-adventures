@@ -6,14 +6,11 @@
 
 Regular Dodec, Hexagonal Bipyramid, Undecagon, Cube
 
-![](images/regdodec.png)
-![](images/hexbipy.png)
-![](images/undec.png)
-![](images/cube.png)
+<img src="images/regdodec.png" height="200px"> <img src="images/hexbipy.png" height="200px"> <img src="images/undec.png" height="200px"> <img src="images/cube.png" height="200px">
 
 Meme
 
-![](images/meme.png)
+<img src="images/meme.png" height="200px">
 
 ## Running
 
